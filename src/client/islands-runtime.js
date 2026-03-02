@@ -230,9 +230,7 @@ export const bootIslands = async ({
 	const manifest = await parseManifest({ elId: manifestElId, reportEvent });
 	const nodes = document.querySelectorAll(selector);
 
-	if (!nodes.length) {
-		reportSecurityEvent({ event: 'islands_not_found' });
-	}
+	if (!nodes.length) return;
 
 	for (const el of nodes) {
 		const moduleSpecifier = el.getAttribute('data-island-module');

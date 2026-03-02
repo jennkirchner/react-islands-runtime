@@ -178,7 +178,7 @@ const ProductSearch = ({
 	const handleSuggestionClick = (suggestion) => {
 		if (suggestion.type === 'product' && suggestion.slug) {
 			saveRecentSearch(suggestion.text);
-			window.location.href = `/product/${suggestion.slug}`;
+			window.location.href = `/products/${suggestion.slug}`;
 		} else if (suggestion.type === 'category' && suggestion.slug) {
 			window.location.href = `/category/${suggestion.slug}`;
 		} else {

@@ -74,17 +74,13 @@ export const listProducts = async ({
 	};
 };
 
-export const getProductBySlug = async (slug, { locale = DEFAULT_LOCALE, currency = DEFAULT_CURRENCY } = {}) => {
-	if (isDemoMode || !apiRoot) {
-		return getSurfProductBySku(slug, currency);
-	}
-
+const getProductByWhere = async ({ where, locale, currency }) => {
 	const response = await apiRoot
 		.productProjections()
 		.get({
 			queryArgs: {
 				staged: false,
-				where: `slug(${locale}="${slug}")`,
+				where,
 				localeProjection: locale,
 				priceCurrency: currency,
 				limit: 1,
@@ -93,11 +89,27 @@ export const getProductBySlug = async (slug, { locale = DEFAULT_LOCALE, currency
 		.execute();
 
 	const body = response.body || {};
-	if (!body.results || body.results.length === 0) {
-		return null;
+	if (!body.results || body.results.length === 0) return null;
+	return normalizeProduct(body.results[0], locale, currency);
+};
+
+export const getProductBySlug = async (slugOrSku, { locale = DEFAULT_LOCALE, currency = DEFAULT_CURRENCY } = {}) => {
+	if (isDemoMode || !apiRoot) {
+		return getSurfProductBySku(slugOrSku, currency);
 	}
 
-	return normalizeProduct(body.results[0], locale, currency);
+	const bySlug = await getProductByWhere({
+		where: `slug(${locale}="${slugOrSku}")`,
+		locale,
+		currency,
+	});
+	if (bySlug) return bySlug;
+
+	return getProductByWhere({
+		where: `variants(sku="${slugOrSku}")`,
+		locale,
+		currency,
+	});
 };
 
 export const getProductById = async (id, { locale = DEFAULT_LOCALE, currency = DEFAULT_CURRENCY } = {}) => {

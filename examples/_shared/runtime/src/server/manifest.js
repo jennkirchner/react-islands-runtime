@@ -69,12 +69,9 @@ export const createManifestProvider = ({
 };
 
 const toModuleSpecifier = (src) => {
-	if (!src.startsWith('src/islands/') || !src.includes('.entry.')) return null;
+	if (!src.startsWith('src/') || !src.includes('/islands/') || !src.includes('.entry.')) return null;
 
-	const name = src.replace(/^src\/islands\//, '').replace(/\.entry\.(js|jsx)$/, '');
-
-	const ext = src.endsWith('.js') ? '.js' : '.jsx';
-	return `/src/islands/${name}.entry${ext}`;
+	return `/${src}`;
 };
 
 export const buildIslandsManifest = ({ viteManifestPath, outPath }) => {

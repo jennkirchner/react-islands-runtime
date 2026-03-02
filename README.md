@@ -45,11 +45,17 @@ This repo publishes the conceptual runtime as separate entry points (no UI compo
 - `react-islands-runtime/islands`
 - `react-islands-runtime/rsc`
 
+Install from npm:
+
+```bash
+npm install react-islands-runtime
+```
+
 ## Key routes
 
 - `/` home with search and mini-cart islands
 - `/products` first 20 products
-- `/product/:sku` product detail with add-to-cart form
+- `/products/:sku` product detail with add-to-cart form
 - `/api/search`, `/api/search/suggestions` for the typeahead
 - `/api/cart` and `/api/cart/items` for cart island and PDP form
 
@@ -100,5 +106,5 @@ The demo server loads `examples/.env` and, when `DEMO_TARGET` is set, `examples/
 ## Notes
 
 - Server imports use ESM with `.js` extensions; the build emits to `dist/`.
-- Islands manifest is generated during `yarn build:client` from Vite output.
+- Islands manifest is generated during `yarn build:client` via `react-islands-gen-manifest` using the Vite manifest.
 - The add-to-cart form posts to `/api/cart/items` and respects existing session cart.

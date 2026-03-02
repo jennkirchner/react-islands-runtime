@@ -3,7 +3,7 @@ import { listProducts } from './product.model.js';
 const matchesQuery = (product, query) => {
 	if (!query) return true;
 	const q = query.toLowerCase();
-	const haystack = [product.name, product.description, product.sku, product.id, ...(product.tags || [])]
+	const haystack = [product.name, product.description, product.slug, product.sku, product.id, ...(product.tags || [])]
 		.filter(Boolean)
 		.join(' ')
 		.toLowerCase();
@@ -29,7 +29,7 @@ export const searchSuggestions = async ({ query = '', limit = 8 } = {}) => {
 			id: product.id,
 			type: 'product',
 			text: product.name,
-			slug: product.sku,
+			slug: product.slug || product.sku || product.id,
 			imageUrl: product.imageUrl || product.images?.[0] || null,
 			price: product.price?.display || null,
 			sku: product.sku,

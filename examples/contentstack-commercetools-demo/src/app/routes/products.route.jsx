@@ -2,6 +2,7 @@ import React from 'react';
 import { listProducts } from '../../../models/product.model.js';
 
 const toView = (p) => ({
+	key: p.slug || p.sku || p.id,
 	sku: p.sku,
 	name: p.name || p.title || 'Product',
 	description: p.description || '',
@@ -30,8 +31,8 @@ export const Page = ({ products }) => {
 			>
 				{products.map((p) => (
 					<a
-						key={p.sku}
-						href={`/product/${encodeURIComponent(p.sku)}`}
+						key={p.key}
+						href={`/products/${encodeURIComponent(p.key)}`}
 						style={{
 							display: 'block',
 							padding: 12,

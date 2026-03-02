@@ -10,7 +10,6 @@ import { createFileRouter } from './router/fileRouter.js';
 import { loadAndCompose } from './render/composeRoute.js';
 import { renderPage } from './render/renderPage.js';
 
-import { createCmsClient, verifyCmsConnection } from './sdk/contentstack.js';
 import apiRoutes from '../../routes/apiRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -42,13 +41,9 @@ if (process.env.NODE_ENV === 'production') {
 	app.use(express.static(path.join(__dirname, '../../dist/client'), { maxAge: '1h' }));
 }
 
-// Attach clients (adapters). If env is missing, client is null.
-app.use((req, res, next) => {
-	try {
-		req.cms = createCmsClient();
-	} catch {
-		req.cms = null;
-	}
+// Attach CMS adapters in app-specific servers when needed.
+app.use((req, _res, next) => {
+	req.cms = null;
 	next();
 });
 
@@ -100,20 +95,4 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
 	console.log(`react-islands listening on http://localhost:${port}`);
 
-	// Run once on boot so connection issues are visible immediately in logs
-	// instead of surfacing later as request-time errors.
-	void verifyCmsConnection().then((result) => {
-		if (result.ok) {
-			console.log('[Content-Stack], CMS connection check: SUCCESS');
-			return;
-		}
-
-		console.warn('[Content-Stack], CMS connection check: FAILED', {
-			message: result.error || 'Unknown CMS startup error',
-			name: result.errorInfo?.name || null,
-			code: result.errorInfo?.code || null,
-			status: result.errorInfo?.status || null,
-			raw: result.errorInfo?.raw || null,
-		});
-	});
 });

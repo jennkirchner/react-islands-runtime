@@ -7,7 +7,7 @@ export const Layout = ({ children }) => {
 				<a href="/" style={{ marginRight: 12 }}>
 					Home
 				</a>
-				<a href="/product/1001">Example Product</a>
+				<a href="/products/1001">Example Product</a>
 			</nav>
 
 			{children}

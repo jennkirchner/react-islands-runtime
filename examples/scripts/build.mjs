@@ -50,54 +50,24 @@ const runViteBuild = () => {
 	});
 };
 
-const toModuleSpecifier = (src) => {
-	if (!src.startsWith('src/app/islands/') || !src.includes('.entry.')) return null;
-
-	return src
-		.replace(/^src\/app\/islands\//, '')
-		.replace(/\.entry\.(js|jsx)$/, '')
-		.replace(/([a-z0-9])([A-Z])/g, '$1_$2')
-		.replace(/[\s-]+/g, '_')
-		.toLowerCase();
-};
-
-const writeIslandsManifest = () => {
-	const viteManifest = JSON.parse(fs.readFileSync(viteManifestPath, 'utf8'));
-	const modules = {};
-
-	for (const [key, rec] of Object.entries(viteManifest)) {
-		const moduleSpecifier = toModuleSpecifier(key);
-		if (!moduleSpecifier) continue;
-
-		modules[moduleSpecifier] = `/${rec.file}`;
+const runIslandsManifestCli = () => {
+	const cliSource = path.resolve('node_modules/react-islands-runtime/src/server/genManifest.js');
+	if (!fs.existsSync(cliSource)) {
+		throw new Error(
+			'Local react-islands-gen-manifest source not found. Run yarn install inside examples first.',
+		);
 	}
 
-	let runtimeFile = null;
-	for (const [key, rec] of Object.entries(viteManifest)) {
-		if (key === 'src/client/islands-runtime.entry.js') {
-			runtimeFile = `/${rec.file}`;
-			break;
-		}
-	}
-
-	if (!runtimeFile) {
-		throw new Error("Could not find runtime entry 'src/client/islands-runtime.entry.js' in Vite manifest.");
-	}
-
-	const islandsManifest = {
-		modules,
-		'islands-runtime': runtimeFile,
-	};
-
-	fs.writeFileSync(outPath, JSON.stringify(islandsManifest, null, '\t'), 'utf8');
-	console.log(`Wrote ${outPath}`);
+	execSync(`node "${cliSource}" --in "${viteManifestPath}" --out "${outPath}"`, {
+		stdio: 'inherit',
+	});
 };
 
 const main = () => {
 	const version = getPackageVersion();
 	updateServiceWorkerCacheName(version);
 	runViteBuild();
-	writeIslandsManifest();
+	runIslandsManifestCli();
 	console.log('Client build complete.');
 };
 
