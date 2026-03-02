@@ -51,14 +51,14 @@ const runViteBuild = () => {
 };
 
 const runIslandsManifestCli = () => {
-	const cliSource = path.resolve('node_modules/react-islands-runtime/src/server/genManifest.js');
-	if (!fs.existsSync(cliSource)) {
+	const cliBin = path.resolve('node_modules/.bin/react-islands-gen-manifest');
+	if (!fs.existsSync(cliBin)) {
 		throw new Error(
-			'Local react-islands-gen-manifest source not found. Run yarn install inside examples first.',
+			'Local react-islands-gen-manifest binary not found. Run yarn install inside examples first.',
 		);
 	}
 
-	execSync(`node "${cliSource}" --in "${viteManifestPath}" --out "${outPath}"`, {
+	execSync(`"${cliBin}" --in "${viteManifestPath}" --out "${outPath}"`, {
 		stdio: 'inherit',
 	});
 };
