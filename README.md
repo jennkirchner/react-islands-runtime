@@ -59,6 +59,10 @@ The package currently exposes:
 - `react-islands-runtime/islands`
 - `react-islands-runtime/rsc`
 
+TypeScript usage guide:
+
+- [docs/typescript.md](/Users/jkirchne/node_projects/react-islands-runtime/docs/typescript.md)
+
 The examples in this repo currently consume the local tarball:
 
 `examples/package.json` points to `file:../builds/react-islands-runtime-0.3.0.tgz`

@@ -30,6 +30,19 @@ const dedupeCssBlocks = (...blocks) =>
 		.filter((block, index, all) => all.indexOf(block) === index)
 		.join('\n\n');
 
+const buildTokenCss = (tokens, selector, prefix) =>
+	dedupeCssBlocks(
+		tokensToCssText(tokens, {
+			selector,
+			prefix,
+		}),
+		prefix
+			? tokensToCssText(tokens, {
+					selector,
+				})
+			: '',
+	);
+
 /**
  * Request-scoped CSS collector for SSR and server-rendered islands.
  * Safe to instantiate once per request.
@@ -67,21 +80,26 @@ export const createCssService = () => {
 			variablePrefix = options.variablePrefix || variablePrefix || '';
 
 			if (theme?.tokens) {
-				const cssText = dedupeCssBlocks(
-					tokensToCssText(theme.tokens, {
-						selector,
-						prefix: variablePrefix,
-					}),
-					variablePrefix
-						? tokensToCssText(theme.tokens, {
-								selector,
-							})
-						: '',
-				);
+				const cssText = buildTokenCss(theme.tokens, selector, variablePrefix);
 				this.addInlineCss(cssText, {
 					key: options.styleKey || 'theme-tokens',
 					id: options.styleId || 'ri-theme-tokens',
 				});
+			}
+
+			if (theme?.modes && typeof theme.modes === 'object') {
+				for (const [modeName, modeTheme] of Object.entries(theme.modes)) {
+					if (!modeTheme?.tokens) continue;
+					const modeCssText = buildTokenCss(
+						modeTheme.tokens,
+						`${selector}[data-theme-mode="${modeName}"]`,
+						variablePrefix,
+					);
+					this.addInlineCss(modeCssText, {
+						key: `${options.styleKey || 'theme-tokens'}:${modeName}`,
+						id: `${options.styleId || 'ri-theme-tokens'}-${modeName}`,
+					});
+				}
 			}
 
 			/** @type {DocumentProps} */

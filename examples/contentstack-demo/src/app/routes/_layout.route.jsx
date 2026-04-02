@@ -1,4 +1,5 @@
 import React from 'react';
+import { ThemeModeSwitch } from '../../../../_shared/components/ThemeModeSwitch.jsx';
 
 export const loader = async () => ({ siteName: 'contentstack-demo' });
 
@@ -18,6 +19,9 @@ export const Layout = ({ children, siteName }) => {
 					</a>
 					<a href="/products">Products</a>
 				</nav>
+				<div className="demo-shell__actions">
+					<ThemeModeSwitch />
+				</div>
 			</header>
 
 			<div className="demo-shell__main">{children}</div>

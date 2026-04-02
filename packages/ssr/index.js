@@ -12,4 +12,5 @@ export { createCssService } from '../../src/server/css/createCssService.js';
 export { mergeDocumentProps } from '../../src/server/css/mergeDocumentProps.js';
 export { flattenTokensToCssVars, tokensToCssText } from '../../src/server/css/tokensToCss.js';
 export { createDomainThemeFeature, defineTheme, defineThemes } from '../../src/server/theme/createDomainThemeFeature.js';
+export { createThemeModeFeature } from '../../src/server/theme/createThemeModeFeature.js';
 export { escapeJsonForInlineScript, serializePropsForAttr } from '../../src/server/serialize.js';

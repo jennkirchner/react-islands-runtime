@@ -1,4 +1,4 @@
-import { createDomainThemeFeature, defineThemes } from 'react-islands-runtime/ssr';
+import { createDomainThemeFeature, createThemeModeFeature, defineThemes } from 'react-islands-runtime/ssr';
 
 const sharedDocumentStyles = `
 	body {
@@ -74,6 +74,12 @@ const shellStyles = `
 		gap: 10px;
 	}
 
+	.demo-shell__actions {
+		display: flex;
+		align-items: center;
+		margin-left: auto;
+	}
+
 	.demo-shell__nav a {
 		padding: 10px 14px;
 		border: 1px solid var(--border-subtle);
@@ -114,6 +120,78 @@ const shellStyles = `
 		font-size: 0.92rem;
 	}
 
+	.demo-theme-switch {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+		padding: 8px 10px 8px 14px;
+		border: 1px solid var(--border-subtle);
+		border-radius: var(--radius-pill, 999px);
+		background: color-mix(in srgb, var(--surface-panel) 78%, white);
+		box-shadow:
+			0 10px 24px color-mix(in srgb, var(--surface-shadow) 10%, transparent),
+			inset 0 1px 0 color-mix(in srgb, white 54%, transparent);
+		backdrop-filter: blur(14px) saturate(1.06);
+	}
+
+	.demo-theme-switch__label {
+		font-size: 0.72rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+	}
+
+	.demo-theme-switch__options {
+		display: inline-flex;
+		gap: 6px;
+		padding: 4px;
+		border-radius: var(--radius-pill, 999px);
+		background: color-mix(in srgb, var(--surface-canvas) 62%, white);
+	}
+
+	.demo-theme-switch__button {
+		appearance: none;
+		border: 0;
+		padding: 9px 13px;
+		border-radius: var(--radius-pill, 999px);
+		background: transparent;
+		color: var(--text-muted);
+		font: inherit;
+		font-size: 0.86rem;
+		font-weight: 700;
+		letter-spacing: -0.01em;
+		cursor: pointer;
+		transition:
+			transform 180ms ease,
+			background 180ms ease,
+			color 180ms ease,
+			box-shadow 180ms ease;
+	}
+
+	.demo-theme-switch__button:hover {
+		transform: translateY(-1px);
+		color: var(--text-primary);
+	}
+
+	.demo-theme-switch__button[data-active="true"],
+	.demo-theme-switch__button[aria-pressed="true"] {
+		background:
+			linear-gradient(180deg, color-mix(in srgb, white 36%, transparent), transparent 75%),
+			color-mix(in srgb, var(--surface-accent) 26%, var(--surface-panel));
+		color: var(--text-primary);
+		box-shadow:
+			0 8px 16px color-mix(in srgb, var(--surface-shadow) 12%, transparent),
+			inset 0 1px 0 color-mix(in srgb, white 58%, transparent);
+	}
+
+	html[data-theme-mode="dark"] .demo-theme-switch__button[data-active="true"],
+	html[data-theme-mode="dark"] .demo-theme-switch__button[aria-pressed="true"] {
+		background:
+			linear-gradient(180deg, color-mix(in srgb, white 10%, transparent), transparent 80%),
+			color-mix(in srgb, var(--surface-accent) 20%, var(--surface-panel));
+	}
+
 	[data-demo-theme="test-data"] .demo-shell {
 		max-width: 1120px;
 	}
@@ -134,6 +212,26 @@ const shellStyles = `
 		background: color-mix(in oklab, var(--surface-panel) 72%, white);
 		border-color: color-mix(in oklab, var(--border-subtle) 82%, white);
 		box-shadow: inset 0 1px 0 color-mix(in oklab, white 50%, transparent);
+	}
+
+	[data-demo-theme="test-data"] .demo-theme-switch {
+		background:
+			linear-gradient(180deg, color-mix(in oklab, white 24%, transparent), transparent 88%),
+			color-mix(in oklab, var(--surface-panel) 74%, white);
+		border-color: color-mix(in oklab, var(--border-subtle) 78%, white);
+		box-shadow:
+			0 16px 36px color-mix(in oklab, var(--surface-shadow) 12%, transparent),
+			inset 0 1px 0 color-mix(in oklab, white 54%, transparent);
+	}
+
+	html[data-demo-theme="test-data"][data-theme-mode="dark"] .demo-shell__header {
+		background:
+			linear-gradient(145deg, color-mix(in oklab, var(--surface-panel) 92%, black), color-mix(in oklab, var(--surface-accent) 14%, var(--surface-panel))),
+			color-mix(in oklab, var(--surface-panel) 92%, black);
+		border-color: color-mix(in oklab, var(--border-subtle) 72%, transparent);
+		box-shadow:
+			0 24px 58px color-mix(in oklab, black 34%, transparent),
+			inset 0 1px 0 color-mix(in oklab, white 12%, transparent);
 	}
 
 	[data-demo-theme="test-data"] .demo-shell__main {
@@ -298,6 +396,255 @@ const shellStyles = `
 		color: var(--text-muted);
 	}
 
+	.demo-carousel {
+		display: grid;
+		gap: 16px;
+	}
+
+	.demo-carousel__header {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.demo-carousel__title {
+		margin: 0;
+		font-size: 1.3rem;
+	}
+
+	.demo-carousel__controls,
+	.demo-carousel__dots {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.demo-carousel__control,
+	.demo-carousel__dot {
+		appearance: none;
+		border: 0;
+		cursor: pointer;
+	}
+
+	.demo-carousel__control {
+		padding: 9px 12px;
+		border-radius: var(--radius-pill, 999px);
+		background: color-mix(in srgb, var(--surface-panel) 76%, white);
+		border: 1px solid var(--border-subtle);
+		color: var(--text-primary);
+		font: inherit;
+		font-size: 0.84rem;
+		font-weight: 700;
+	}
+
+	.demo-carousel__viewport {
+		position: relative;
+		overflow: hidden;
+	}
+
+	.demo-carousel__track {
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: minmax(0, 1fr);
+		gap: 18px;
+		transition: transform 320ms ease;
+	}
+
+	.demo-carousel__track--spotlight {
+		grid-auto-columns: 100%;
+		gap: 0;
+	}
+
+	.demo-carousel__slide {
+		position: relative;
+		overflow: hidden;
+		display: grid;
+		gap: 16px;
+		padding: 16px;
+		border-radius: var(--radius-card, 24px);
+		border: 1px solid var(--border-subtle);
+		background:
+			linear-gradient(180deg, color-mix(in srgb, white 20%, transparent), transparent 38%),
+			color-mix(in srgb, var(--surface-panel) 78%, white);
+		box-shadow:
+			0 18px 36px color-mix(in srgb, var(--surface-shadow) 12%, transparent),
+			inset 0 1px 0 color-mix(in srgb, white 54%, transparent);
+		min-height: 100%;
+	}
+
+	.demo-carousel__media {
+		overflow: hidden;
+		border-radius: calc(var(--radius-card, 24px) - 8px);
+		aspect-ratio: 16 / 10;
+	}
+
+	.demo-carousel__media img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	.demo-carousel__copy {
+		display: grid;
+		gap: 8px;
+	}
+
+	.demo-carousel__eyebrow {
+		font-size: 0.72rem;
+		font-weight: 700;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+	}
+
+	.demo-carousel__slide-title {
+		margin: 0;
+		font-size: 1.12rem;
+	}
+
+	.demo-carousel__slide-body {
+		margin: 0;
+		color: var(--text-muted);
+		line-height: 1.6;
+	}
+
+	.demo-carousel__dot {
+		width: 11px;
+		height: 11px;
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--border-subtle) 90%, transparent);
+		border: 1px solid color-mix(in srgb, var(--surface-panel) 65%, white);
+		transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+	}
+
+	.demo-carousel__dot[data-active="true"] {
+		transform: scale(1.18);
+		background: var(--surface-accent);
+		box-shadow: 0 0 0 4px color-mix(in srgb, var(--surface-accent) 18%, transparent);
+	}
+
+	.demo-carousel--peek-strip .demo-carousel__track {
+		grid-auto-columns: minmax(280px, 1fr);
+	}
+
+	.demo-carousel--editorial-stack .demo-carousel__slide {
+		grid-template-columns: minmax(220px, 0.95fr) minmax(0, 1.05fr);
+		align-items: center;
+	}
+
+	.demo-carousel--floating-cards .demo-carousel__track {
+		grid-auto-columns: minmax(260px, 1fr);
+		align-items: stretch;
+	}
+
+	.demo-carousel--floating-cards .demo-carousel__slide:nth-child(2n) {
+		transform: translateY(10px);
+	}
+
+	.demo-carousel--spotlight-dots .demo-carousel__slide {
+		grid-template-columns: minmax(220px, 0.9fr) minmax(0, 1.1fr);
+		align-items: center;
+		min-height: 320px;
+	}
+
+	.demo-carousel--spotlight-dots .demo-carousel__dots {
+		justify-content: center;
+	}
+
+	.demo-carousel__accent {
+		position: absolute;
+		right: 16px;
+		top: 16px;
+		z-index: 2;
+		width: 56px;
+		height: 56px;
+		padding: 6px;
+		border-radius: 20px;
+		background: color-mix(in oklab, var(--surface-panel) 70%, white);
+		box-shadow:
+			0 14px 28px color-mix(in oklab, var(--surface-shadow) 18%, transparent),
+			inset 0 1px 0 color-mix(in oklab, white 54%, transparent);
+		backdrop-filter: blur(14px) saturate(1.12);
+	}
+
+	.demo-carousel__accent img {
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+
+	.demo-carousel__pinned-wrap {
+		display: grid;
+		grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.1fr);
+		gap: 18px;
+	}
+
+	.demo-carousel__marquee {
+		overflow: hidden;
+	}
+
+	.demo-carousel__marquee.is-paused .demo-carousel__marquee-track {
+		animation-play-state: paused;
+	}
+
+	.demo-carousel__marquee-track {
+		display: flex;
+		gap: 18px;
+		width: max-content;
+		animation: demo-carousel-marquee 24s linear infinite;
+	}
+
+	.demo-carousel__slide--marquee {
+		width: min(340px, 72vw);
+	}
+
+	@keyframes demo-carousel-marquee {
+		from {
+			transform: translateX(0);
+		}
+		to {
+			transform: translateX(calc(-50% - 9px));
+		}
+	}
+
+	.test-data-carousel-card {
+		padding: 0;
+		border: 0;
+		background: transparent;
+		box-shadow: none;
+	}
+
+	[data-demo-theme="test-data"] .test-data-carousel-card {
+		padding: 0;
+	}
+
+	[data-demo-theme="test-data"] .demo-carousel__slide,
+	[data-demo-theme="test-data"] .demo-carousel__control {
+		background:
+			linear-gradient(180deg, color-mix(in oklab, white 20%, transparent), transparent 38%),
+			color-mix(in oklab, var(--surface-panel) 74%, white);
+		border-color: color-mix(in oklab, var(--border-subtle) 78%, white);
+		box-shadow:
+			0 18px 38px color-mix(in oklab, var(--surface-shadow) 14%, transparent),
+			inset 0 1px 0 color-mix(in oklab, white 54%, transparent);
+	}
+
+	[data-demo-theme="test-data"] .demo-carousel__dot {
+		background: color-mix(in oklab, var(--border-subtle) 82%, transparent);
+		border-color: color-mix(in oklab, white 42%, transparent);
+	}
+
+	html[data-demo-theme="test-data"][data-theme-mode="dark"] .demo-carousel__slide,
+	html[data-demo-theme="test-data"][data-theme-mode="dark"] .demo-carousel__control,
+	html[data-demo-theme="test-data"][data-theme-mode="dark"] .demo-carousel__accent {
+		box-shadow:
+			0 18px 40px color-mix(in oklab, black 28%, transparent),
+			inset 0 1px 0 color-mix(in oklab, white 10%, transparent);
+	}
+
 	.test-data-products-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -383,6 +730,32 @@ const shellStyles = `
 		font-weight: 800;
 	}
 
+	html[data-demo-theme="test-data"][data-theme-mode="dark"] .test-data-hero {
+		background:
+			linear-gradient(145deg, oklab(0.34 -0.03 -0.05), oklab(0.46 -0.032 0.005) 48%, oklab(0.56 -0.01 0.02)),
+			color-mix(in oklab, var(--surface-panel) 88%, black);
+		border-color: color-mix(in oklab, var(--border-subtle) 62%, transparent);
+		box-shadow:
+			0 28px 70px color-mix(in oklab, black 40%, transparent),
+			inset 0 1px 0 color-mix(in oklab, white 12%, transparent),
+			inset 0 -28px 48px color-mix(in oklab, var(--surface-accent) 10%, transparent);
+	}
+
+	html[data-demo-theme="test-data"][data-theme-mode="dark"] .test-data-hero::before {
+		background:
+			radial-gradient(circle at 18% 18%, oklab(0.72 -0.02 -0.04 / 0.22), transparent 30%),
+			radial-gradient(circle at 80% 12%, oklab(0.7 -0.012 0.06 / 0.16), transparent 26%),
+			linear-gradient(180deg, color-mix(in oklab, white 8%, transparent), transparent 36%);
+	}
+
+	html[data-demo-theme="test-data"][data-theme-mode="dark"] .test-data-product-card,
+	html[data-demo-theme="test-data"][data-theme-mode="dark"] .demo-shell section,
+	html[data-demo-theme="test-data"][data-theme-mode="dark"] .demo-theme-switch {
+		box-shadow:
+			0 18px 36px color-mix(in oklab, black 28%, transparent),
+			inset 0 1px 0 color-mix(in oklab, white 10%, transparent);
+	}
+
 	@media (max-width: 720px) {
 		.demo-shell {
 			padding-inline: 14px;
@@ -396,6 +769,17 @@ const shellStyles = `
 		.demo-shell section {
 			padding: 18px;
 			border-radius: 18px;
+		}
+
+		.demo-shell__actions {
+			width: 100%;
+			justify-content: flex-start;
+			margin-left: 0;
+		}
+
+		.demo-theme-switch {
+			width: 100%;
+			justify-content: space-between;
 		}
 
 		.test-data-hero {
@@ -415,6 +799,16 @@ const shellStyles = `
 
 		.test-data-product-detail {
 			grid-template-columns: 1fr;
+		}
+
+		.demo-carousel--editorial-stack .demo-carousel__slide,
+		.demo-carousel--spotlight-dots .demo-carousel__slide,
+		.demo-carousel__pinned-wrap {
+			grid-template-columns: 1fr;
+		}
+
+		.demo-carousel__slide--marquee {
+			width: min(280px, 78vw);
 		}
 	}
 `;
@@ -451,6 +845,32 @@ const themes = defineThemes({
 				{ id: 'demo-shell', cssText: shellStyles },
 			],
 		},
+		modes: {
+			dark: {
+				colorScheme: 'dark',
+				themeColor: '#1f1913',
+				tokens: {
+					surface: {
+						canvas: '#19130f',
+						muted: '#231b16',
+						panel: 'rgba(45, 34, 27, 0.84)',
+						accent: '#d9b16e',
+						shadow: '#070504',
+					},
+					text: {
+						primary: '#f3e8da',
+						muted: '#c6ab88',
+					},
+					border: {
+						subtle: '#6f573d',
+					},
+					interactive: {
+						link: '#f2c588',
+						linkHover: '#ffe0b4',
+					},
+				},
+			},
+		},
 	},
 	commercetools: {
 		name: 'commercetools',
@@ -482,6 +902,32 @@ const themes = defineThemes({
 				{ id: 'demo-base', cssText: sharedDocumentStyles },
 				{ id: 'demo-shell', cssText: shellStyles },
 			],
+		},
+		modes: {
+			dark: {
+				colorScheme: 'dark',
+				themeColor: '#101a29',
+				tokens: {
+					surface: {
+						canvas: '#0d1621',
+						muted: '#132131',
+						panel: 'rgba(22, 34, 52, 0.84)',
+						accent: '#78b6ff',
+						shadow: '#04070d',
+					},
+					text: {
+						primary: '#edf6ff',
+						muted: '#a9c0db',
+					},
+					border: {
+						subtle: '#315070',
+					},
+					interactive: {
+						link: '#8bc2ff',
+						linkHover: '#c1e0ff',
+					},
+				},
+			},
 		},
 	},
 	contentstack: {
@@ -515,6 +961,32 @@ const themes = defineThemes({
 				{ id: 'demo-shell', cssText: shellStyles },
 			],
 		},
+		modes: {
+			dark: {
+				colorScheme: 'dark',
+				themeColor: '#1f1712',
+				tokens: {
+					surface: {
+						canvas: '#18110d',
+						muted: '#241912',
+						panel: 'rgba(49, 34, 24, 0.84)',
+						accent: '#efb364',
+						shadow: '#070403',
+					},
+					text: {
+						primary: '#f8e8db',
+						muted: '#caa88a',
+					},
+					border: {
+						subtle: '#76543b',
+					},
+					interactive: {
+						link: '#f3bf82',
+						linkHover: '#ffe1ba',
+					},
+				},
+			},
+		},
 	},
 	'contentstack-commercetools': {
 		name: 'contentstack-commercetools',
@@ -546,6 +1018,32 @@ const themes = defineThemes({
 				{ id: 'demo-base', cssText: sharedDocumentStyles },
 				{ id: 'demo-shell', cssText: shellStyles },
 			],
+		},
+		modes: {
+			dark: {
+				colorScheme: 'dark',
+				themeColor: '#101d18',
+				tokens: {
+					surface: {
+						canvas: '#0d1512',
+						muted: '#14221d',
+						panel: 'rgba(20, 42, 34, 0.84)',
+						accent: '#73d2ac',
+						shadow: '#030706',
+					},
+					text: {
+						primary: '#eafaf2',
+						muted: '#a7cdbd',
+					},
+					border: {
+						subtle: '#30574a',
+					},
+					interactive: {
+						link: '#8fe6c1',
+						linkHover: '#c4f7df',
+					},
+				},
+			},
 		},
 	},
 	'test-data': {
@@ -585,6 +1083,38 @@ const themes = defineThemes({
 				{ id: 'demo-shell', cssText: shellStyles },
 			],
 		},
+		modes: {
+			dark: {
+				colorScheme: 'dark',
+				themeColor: 'oklab(0.34 -0.028 -0.05)',
+				tokens: {
+					surface: {
+						canvas: 'oklab(0.2 -0.01 -0.02)',
+						muted: 'oklab(0.27 -0.01 0.01)',
+						panel: 'oklab(0.3 -0.012 -0.018 / 0.82)',
+						accent: 'oklab(0.72 -0.07 -0.06)',
+						shadow: 'oklab(0.12 -0.01 -0.02)',
+					},
+					text: {
+						primary: 'oklab(0.92 -0.01 -0.015)',
+						muted: 'oklab(0.76 -0.008 0.012)',
+					},
+					border: {
+						subtle: 'oklab(0.46 -0.018 0.02)',
+					},
+					interactive: {
+						link: 'oklab(0.82 -0.06 -0.07)',
+						linkHover: 'oklab(0.9 -0.03 -0.03)',
+					},
+					radius: {
+						shell: '32px',
+						card: '26px',
+						hero: '36px',
+						pill: '999px',
+					},
+				},
+			},
+		},
 	},
 });
 
@@ -603,3 +1133,21 @@ export const createDemoThemeFeature = (name) =>
 			return themes[mapDemoNameToThemeKey(name)] || null;
 		},
 	});
+
+export const createDemoThemeModeFeature = (name) => {
+	const key = mapDemoNameToThemeKey(name);
+	const theme = themes[key];
+	const allowAuto = key === 'test-data';
+	const themeColors = {
+		light: theme?.themeColor,
+		dark: theme?.modes?.dark?.themeColor,
+	};
+
+	return createThemeModeFeature({
+		allowedModes: ['light', 'dark'],
+		allowAuto,
+		defaultPreference: allowAuto ? 'auto' : 'light',
+		fallbackMode: 'light',
+		themeColors,
+	});
+};

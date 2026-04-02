@@ -3,12 +3,14 @@ import { Island, resolveIslandModule } from 'react-islands-runtime/ssr';
 
 import CartSSR from '../../../../_shared/runtime/src/islands/Cart.ssr.jsx';
 import ProductSearchSSR from '../../../../_shared/runtime/src/islands/ProductSearch.ssr.jsx';
-
+import { CarouselBlock } from '../../../../_shared/components/CarouselBlock.jsx';
+import { normalizeHomepageBlocks } from '../../../../_shared/homepageBlocks.js';
 import { getLandingPage } from '../../../models/content.model.js';
 
 export const loader = async () => {
 	const page = await getLandingPage();
-	return { page };
+	const blocks = normalizeHomepageBlocks(Array.isArray(page?.blocks) ? page.blocks : [], 'commercetools-demo');
+	return { page: { ...page, blocks } };
 };
 
 export const head = (props) => ({ title: props.page?.title || 'Commercetools Demo' });
@@ -33,6 +35,10 @@ export const Page = ({ page }) => {
 							<p style={{ marginTop: 8 }}>{b.body}</p>
 						</section>
 					);
+				}
+
+				if (b.type === 'carousel') {
+					return <CarouselBlock key={i} block={b} style={{ marginBottom: 24 }} />;
 				}
 
 				if (b.type === 'product_search') {

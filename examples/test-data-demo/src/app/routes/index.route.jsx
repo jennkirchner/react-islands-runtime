@@ -3,27 +3,9 @@ import { Island, resolveIslandModule } from 'react-islands-runtime/ssr';
 
 import CartSSR from '../../../../_shared/runtime/src/islands/Cart.ssr.jsx';
 import ProductSearchSSR from '../../../../_shared/runtime/src/islands/ProductSearch.ssr.jsx';
-
+import { CarouselBlock } from '../../../../_shared/components/CarouselBlock.jsx';
+import { normalizeHomepageBlocks } from '../../../../_shared/homepageBlocks.js';
 import { getLandingPage, getHeroBanners } from '../../../models/content.model.js';
-
-const normalizeBlocks = (blocks = []) => {
-	const hasSearch = blocks.some((b) => b.type === 'product_search');
-	const hasCart = blocks.some((b) => b.type === 'cart_mini');
-
-	const next = [...blocks];
-	if (!hasSearch) next.push({ type: 'product_search', islandKey: 'product_search', hydrate: 'immediate' });
-	if (!hasCart) next.push({ type: 'cart_mini', islandKey: 'cart', hydrate: 'immediate' });
-
-	const searchIndex = next.findIndex((b) => b.type === 'product_search');
-	const heroIndex = next.findIndex((b) => b.type === 'hero');
-
-	if (searchIndex !== -1 && heroIndex !== -1 && searchIndex !== heroIndex + 1) {
-		const [searchBlock] = next.splice(searchIndex, 1);
-		next.splice(heroIndex + 1, 0, searchBlock);
-	}
-
-	return next;
-};
 
 export const loader = async () => {
 	const page = await getLandingPage('home');
@@ -39,7 +21,7 @@ export const loader = async () => {
 		}));
 	}
 
-	const blocks = normalizeBlocks([...rawBlocks, ...heroBlocks]);
+	const blocks = normalizeHomepageBlocks([...rawBlocks, ...heroBlocks], 'test-data-demo');
 
 	return {
 		page: {
@@ -83,6 +65,10 @@ export const Page = ({ page }) => {
 							<p className="test-data-promo__body">{b.body}</p>
 						</section>
 					);
+				}
+
+				if (b.type === 'carousel') {
+					return <CarouselBlock key={i} block={b} className="test-data-carousel-card" />;
 				}
 
 				if (b.type === 'product_search') {

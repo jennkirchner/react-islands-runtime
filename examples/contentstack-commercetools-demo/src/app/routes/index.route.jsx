@@ -3,22 +3,9 @@ import { Island, resolveIslandModule } from 'react-islands-runtime/ssr';
 
 import CartSSR from '../../../../_shared/runtime/src/islands/Cart.ssr.jsx';
 import ProductSearchSSR from '../../../../_shared/runtime/src/islands/ProductSearch.ssr.jsx';
-
+import { CarouselBlock } from '../../../../_shared/components/CarouselBlock.jsx';
+import { normalizeHomepageBlocks } from '../../../../_shared/homepageBlocks.js';
 import { getLandingPage, getHeroBanners } from '../../../models/contentstack.model.js';
-
-const normalizeBlocks = (blocks = []) => {
-	const hasSearch = blocks.some((b) => b.type === 'product_search');
-	const hasCart = blocks.some((b) => b.type === 'cart_mini');
-
-	const next = [...blocks];
-	if (!hasSearch) {
-		next.push({ type: 'product_search', islandKey: 'product_search', hydrate: 'immediate' });
-	}
-	if (!hasCart) {
-		next.push({ type: 'cart_mini', islandKey: 'cart', hydrate: 'immediate' });
-	}
-	return next;
-};
 
 export const loader = async () => {
 	const page = await getLandingPage('home');
@@ -34,7 +21,7 @@ export const loader = async () => {
 		}));
 	}
 
-	const blocks = normalizeBlocks([...rawBlocks, ...heroBlocks]);
+	const blocks = normalizeHomepageBlocks([...rawBlocks, ...heroBlocks], 'contentstack-commercetools-demo');
 
 	return {
 		page: {
@@ -66,6 +53,10 @@ export const Page = ({ page }) => {
 							<p style={{ marginTop: 8 }}>{b.body}</p>
 						</section>
 					);
+				}
+
+				if (b.type === 'carousel') {
+					return <CarouselBlock key={i} block={b} style={{ marginBottom: 24 }} />;
 				}
 
 				if (b.type === 'product_search') {

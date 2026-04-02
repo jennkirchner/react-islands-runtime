@@ -33,6 +33,7 @@ export const HtmlDocument = ({
 	const styleTags = documentProps.styles || [];
 	const headPrefix = documentProps.headPrefix || [];
 	const headSuffix = documentProps.headSuffix || [];
+	const hasThemeColor = metaTags.some((tag) => tag?.name === 'theme-color');
 
 	return React.createElement(
 		'html',
@@ -46,7 +47,7 @@ export const HtmlDocument = ({
 				name: 'viewport',
 				content: 'width=device-width, initial-scale=1',
 			}),
-			React.createElement('meta', { name: 'theme-color', content: '#ffffff' }),
+			hasThemeColor ? null : React.createElement('meta', { name: 'theme-color', content: '#ffffff' }),
 			React.createElement('title', null, title),
 			React.createElement('link', {
 				rel: 'manifest',
