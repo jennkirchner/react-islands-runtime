@@ -1,14 +1,52 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const cx = (...values) => values.filter(Boolean).join(' ');
+const toCssSize = (value) => {
+	if (typeof value === 'number' && Number.isFinite(value)) return `${value}px`;
+	if (typeof value === 'string' && value.trim()) return value;
+	return undefined;
+};
 
-const useSlideCount = (slides, variant, freezeFirstFrame) =>
-	useMemo(() => {
-		if (variant === 'pin-first-marquee' && freezeFirstFrame) return slides.slice(1);
-		return slides;
-	}, [freezeFirstFrame, slides, variant]);
+const toPositiveNumber = (value) => {
+	const next = Number(value);
+	return Number.isFinite(next) && next > 0 ? next : undefined;
+};
+
+const parseRatioPair = (value, firstKey, secondKey) => {
+	if (Array.isArray(value) && value.length >= 2) {
+		const first = toPositiveNumber(value[0]);
+		const second = toPositiveNumber(value[1]);
+		if (first && second) return { first, second };
+	}
+
+	if (value && typeof value === 'object') {
+		const first = toPositiveNumber(value[firstKey]);
+		const second = toPositiveNumber(value[secondKey]);
+		if (first && second) return { first, second };
+	}
+
+	if (typeof value === 'string') {
+		const parts = value
+			.split(/[:/,\s]+/)
+			.map((part) => toPositiveNumber(part))
+			.filter(Boolean);
+		if (parts.length >= 2) return { first: parts[0], second: parts[1] };
+	}
+
+	return undefined;
+};
+
+const parseSlideImageTextRatio = (value) => {
+	const ratio = parseRatioPair(value, 'image', 'text');
+	return ratio ? { image: ratio.first, text: ratio.second } : undefined;
+};
+
+const parseStickySlideSizeRatio = (value) => {
+	const ratio = parseRatioPair(value, 'sticky', 'slide');
+	return ratio ? { sticky: ratio.first, slide: ratio.second } : undefined;
+};
 
 const getSlideElements = (scroller) => Array.from(scroller?.querySelectorAll('[data-carousel-slide]') || []);
 
@@ -72,17 +110,17 @@ const useCarouselState = ({ count, autoPlayMs, pauseOnHover, enabledDots, scroll
 
 const SlideCard = ({ slide, index, cardClassName }) => (
 	<article
-		className={cx('demo-carousel__slide', cardClassName)}
+		className={cx('carousel__slide', cardClassName)}
 		data-carousel-slide=""
 		data-carousel-index={index}
 	>
-		<div className="demo-carousel__media">
-			<img src={slide.image} alt={slide.title} />
+		<div className="carousel__media">
+			<img src={slide.image} alt={slide.title} draggable="false" />
 		</div>
-		<div className="demo-carousel__copy">
-			{slide.eyebrow ? <span className="demo-carousel__eyebrow">{slide.eyebrow}</span> : null}
-			<h3 className="demo-carousel__slide-title">{slide.title}</h3>
-			<p className="demo-carousel__slide-body">{slide.body}</p>
+		<div className="carousel__copy">
+			{slide.eyebrow ? <span className="carousel__eyebrow">{slide.eyebrow}</span> : null}
+			<h3 className="carousel__slide-title">{slide.title}</h3>
+			<p className="carousel__slide-body">{slide.body}</p>
 		</div>
 	</article>
 );
@@ -99,13 +137,19 @@ const Carousel = ({
 		showDots = false,
 		showArrows = true,
 		pauseOnHover = true,
-		freezeFirstFrame = false,
+		stickyPaneCount = 0,
+		visibleScrollPanes = 1,
 	} = options;
 
 	const spotlight = variant === 'spotlight-dots';
-	const pinnedPane = variant === 'pin-first-marquee' && freezeFirstFrame;
-	const pinnedSlide = pinnedPane ? slides[0] : null;
-	const scrollSlides = useSlideCount(slides, variant, freezeFirstFrame);
+	const pinnedPaneCount = Math.max(0, Math.min(stickyPaneCount, slides.length));
+	const hasPinnedPane = pinnedPaneCount > 0;
+	const pinnedSlides = slides.slice(0, pinnedPaneCount);
+	const scrollSlides = slides.slice(pinnedPaneCount);
+	const minHeight = toCssSize(options.minHeight);
+	const maxHeight = toCssSize(options.maxHeight);
+	const slideImageTextRatio = parseSlideImageTextRatio(options.slideImageTextRatio);
+	const stickySlideSizeRatio = parseStickySlideSizeRatio(options.stickySlideSizeRatio);
 	const scrollerRef = useRef(null);
 	const count = scrollSlides.length;
 	const { index, paused, setPaused } = useCarouselState({
@@ -130,43 +174,71 @@ const Carousel = ({
 
 	return (
 		<div
-			className={cx('demo-carousel', `demo-carousel--${variant}`, paused && 'is-paused')}
+			className={cx('carousel', `carousel--${variant}`, paused && 'is-paused')}
 			onMouseEnter={pauseOnHover ? () => setPaused(true) : undefined}
 			onMouseLeave={pauseOnHover ? () => setPaused(false) : undefined}
 		>
-			<div className="demo-carousel__header">
-				<h2 className="demo-carousel__title">{title}</h2>
+			<div className="carousel__header">
+				<h2 className="carousel__title">{title}</h2>
 				{showArrows && count > 0 ? (
-					<div className="demo-carousel__controls">
-						<button type="button" className="demo-carousel__control" onClick={goPrev} aria-label="Previous slide">
+					<div className="carousel__controls">
+						<button type="button" className="carousel__control" onClick={goPrev} aria-label="Previous slide">
 							<span aria-hidden="true">‹</span>
 						</button>
-						<button type="button" className="demo-carousel__control" onClick={goNext} aria-label="Next slide">
+						<button type="button" className="carousel__control" onClick={goNext} aria-label="Next slide">
 							<span aria-hidden="true">›</span>
 						</button>
 					</div>
 				) : null}
 			</div>
-			<div className="demo-carousel__viewport">
+			<div className="carousel__viewport">
 				{accentIconSrc ? (
-					<div className="demo-carousel__accent">
+					<div className="carousel__accent">
 						<img src={accentIconSrc} alt="" />
 					</div>
 				) : null}
 
-				<div className={cx('demo-carousel__layout', pinnedPane && 'demo-carousel__layout--pinned')}>
-					{pinnedSlide ? (
-						<div className="demo-carousel__pinned">
-							<SlideCard slide={pinnedSlide} index={0} cardClassName="demo-carousel__slide--pinned" />
+				<div
+					className={cx('carousel__layout', hasPinnedPane && 'carousel__layout--pinned')}
+					style={{
+						'--carousel-visible-slides': `${Math.max(1, visibleScrollPanes)}`,
+						...(minHeight ? { '--carousel-min-height': minHeight } : {}),
+						...(maxHeight ? { '--carousel-max-height': maxHeight } : {}),
+						...(slideImageTextRatio
+							? {
+									'--carousel-slide-media-fr': `${slideImageTextRatio.image}`,
+									'--carousel-slide-copy-fr': `${slideImageTextRatio.text}`,
+								}
+							: {}),
+						...(stickySlideSizeRatio
+							? {
+									'--carousel-sticky-pane-width': `${stickySlideSizeRatio.sticky}fr`,
+									'--carousel-scroll-pane-width': `${stickySlideSizeRatio.slide * Math.max(1, visibleScrollPanes)}fr`,
+								}
+							: {}),
+					}}
+				>
+					{hasPinnedPane ? (
+						<div className="carousel__pinned">
+							<div className="carousel__pinned-stack">
+								{pinnedSlides.map((slide, pinnedIndex) => (
+									<SlideCard
+										key={`${slide.title}-pinned-${pinnedIndex}`}
+										slide={slide}
+										index={pinnedIndex}
+										cardClassName="carousel__slide--pinned"
+									/>
+								))}
+							</div>
 						</div>
 					) : null}
 
 					<div
 						ref={scrollerRef}
 						className={cx(
-							'demo-carousel__scroller',
-							spotlight && 'demo-carousel__scroller--spotlight',
-							pinnedPane && 'demo-carousel__scroller--rail',
+							'carousel__scroller',
+							spotlight && 'carousel__scroller--spotlight',
+							hasPinnedPane && 'carousel__scroller--rail',
 						)}
 					>
 						{scrollSlides.map((slide, slideIndex) => (
@@ -175,7 +247,7 @@ const Carousel = ({
 								slide={slide}
 								index={slideIndex}
 								cardClassName={cx(
-									`demo-carousel__slide--${variant}`,
+									`carousel__slide--${variant}`,
 									spotlight && slideIndex === index && 'is-current',
 								)}
 							/>
@@ -184,12 +256,12 @@ const Carousel = ({
 				</div>
 			</div>
 			{showDots && count > 1 ? (
-				<div className="demo-carousel__dots" aria-label="Carousel pagination">
+				<div className="carousel__dots" aria-label="Carousel pagination">
 					{scrollSlides.map((slide, slideIndex) => (
 						<button
 							key={`${slide.title}-dot`}
 							type="button"
-							className="demo-carousel__dot"
+							className="carousel__dot"
 							data-active={slideIndex === index ? 'true' : 'false'}
 							aria-label={`Go to slide ${slideIndex + 1}`}
 							onClick={() => scrollToSlide(scrollerRef.current, slideIndex)}

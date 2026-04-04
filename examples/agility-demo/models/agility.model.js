@@ -29,7 +29,7 @@ export const getLandingPage = async (slug) => {
 
 	return {
 		slug,
-		title: 'Agility Demo Landing Page',
+		title: 'Agility Landing Page',
 		blocks: [
 			{ type: 'hero', title: 'Agility Hero', subtitle: 'Agility mock content' },
 			{ type: 'promo', title: 'Agility Promo', body: 'Promotional module' },

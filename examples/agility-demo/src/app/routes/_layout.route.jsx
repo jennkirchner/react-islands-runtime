@@ -1,7 +1,7 @@
 import React from 'react';
 import { ThemeModeSwitch } from '../../../../_shared/components/ThemeModeSwitch.jsx';
 
-export const loader = async () => ({ siteName: 'agility-demo' });
+export const loader = async () => ({ siteName: 'Agility' });
 
 export const head = (props) => ({ title: props.siteName });
 

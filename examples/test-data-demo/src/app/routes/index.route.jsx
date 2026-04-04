@@ -3,8 +3,9 @@ import { Island, resolveIslandModule } from 'react-islands-runtime/ssr';
 
 import CartSSR from '../../../../_shared/runtime/src/islands/Cart.ssr.jsx';
 import ProductSearchSSR from '../../../../_shared/runtime/src/islands/ProductSearch.ssr.jsx';
+import { getCarouselBlock } from '../../../../_shared/carousels.js';
 import { CarouselBlock } from '../../../../_shared/components/CarouselBlock.jsx';
-import { normalizeHomepageBlocks } from '../../../../_shared/homepageBlocks.js';
+import { ensureBlock, moveBlockAfter, moveBlockToFront } from '../../../../_shared/homepageBlocks.js';
 import { getLandingPage, getHeroBanners } from '../../../models/content.model.js';
 
 export const loader = async () => {
@@ -21,27 +22,60 @@ export const loader = async () => {
 		}));
 	}
 
-	const blocks = normalizeHomepageBlocks([...rawBlocks, ...heroBlocks], 'test-data-demo');
+	const blocks = [...rawBlocks, ...heroBlocks];
+
+	ensureBlock(blocks, 'product_search', () => ({
+		type: 'product_search',
+		islandKey: 'product_search',
+		hydrate: 'immediate',
+	}));
+	ensureBlock(blocks, 'cart_mini', () => ({
+		type: 'cart_mini',
+		islandKey: 'cart',
+		hydrate: 'immediate',
+	}));
+	ensureBlock(blocks, 'carousel', () => getCarouselBlock('test-data-demo'));
+
+	const arrangedBlocks = moveBlockAfter(moveBlockToFront(blocks, 'product_search'), 'carousel', 'product_search');
 
 	return {
 		page: {
-			title: page?.title || 'Test Data Demo',
-			blocks,
+			title: page?.title || 'Test Data',
+			blocks: arrangedBlocks,
 		},
 	};
 };
 
-export const head = (props) => ({ title: props.page?.title || 'Test Data Demo' });
+export const head = (props) => ({ title: props.page?.title || 'Test Data' });
 
 export const Page = ({ page }) => {
 	return (
 		<main className="test-data-page">
 			{(page?.blocks || []).map((b, i) => {
+				if (b.type === 'product_search') {
+					return (
+						<section key={i} className="test-data-search-card">
+							<h2 className="test-data-card-title">Search Local Surf Gear</h2>
+							<p className="test-data-card-copy">
+								Type anything from “glass” to “fins” and the island will query the checked-in product
+								fixtures.
+							</p>
+							<Island
+								islandKey={b.islandKey}
+								hydrate={b.hydrate || 'immediate'}
+								props={{ placeholder: 'Search local test products...' }}
+								resolveIslandModule={resolveIslandModule}
+							>
+								<ProductSearchSSR placeholder="Search local test products..." />
+							</Island>
+						</section>
+					);
+				}
 				if (b.type === 'hero') {
 					return (
 						<section key={i} className="test-data-hero">
 							<div className="test-data-hero__content">
-								<span className="test-data-hero__eyebrow">{b.eyebrow || 'Test Data Demo'}</span>
+								<span className="test-data-hero__eyebrow">{b.eyebrow || 'Test Data'}</span>
 								<h1 className="test-data-hero__title">{b.title}</h1>
 								<p className="test-data-hero__subtitle">{b.subtitle}</p>
 								<ul className="test-data-hero__meta">
@@ -71,30 +105,13 @@ export const Page = ({ page }) => {
 					return <CarouselBlock key={i} block={b} className="test-data-carousel-card" />;
 				}
 
-				if (b.type === 'product_search') {
-					return (
-						<section key={i} className="test-data-search-card">
-							<h2 className="test-data-card-title">Search Local Surf Gear</h2>
-							<p className="test-data-card-copy">
-								Type anything from “glass” to “fins” and the island will query the checked-in product fixtures.
-							</p>
-							<Island
-								islandKey={b.islandKey}
-								hydrate={b.hydrate || 'immediate'}
-								props={{ placeholder: 'Search local test products...' }}
-								resolveIslandModule={resolveIslandModule}
-							>
-								<ProductSearchSSR placeholder="Search local test products..." />
-							</Island>
-						</section>
-					);
-				}
-
 				if (b.type === 'cart_mini') {
 					return (
 						<section key={i} className="test-data-cart-card">
 							<h2 className="test-data-card-title">Mini Cart</h2>
-							<p className="test-data-card-copy">A simple fixture-backed cart shell for island hydration checks.</p>
+							<p className="test-data-card-copy">
+								A simple fixture-backed cart shell for island hydration checks.
+							</p>
 							<Island
 								islandKey={b.islandKey}
 								hydrate={b.hydrate || 'immediate'}

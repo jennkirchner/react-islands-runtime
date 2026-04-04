@@ -3,23 +3,40 @@ import { Island, resolveIslandModule } from 'react-islands-runtime/ssr';
 
 import CartSSR from '../../../../_shared/runtime/src/islands/Cart.ssr.jsx';
 import ProductSearchSSR from '../../../../_shared/runtime/src/islands/ProductSearch.ssr.jsx';
+import { getCarouselBlock } from '../../../../_shared/carousels.js';
 import { CarouselBlock } from '../../../../_shared/components/CarouselBlock.jsx';
-import { normalizeHomepageBlocks } from '../../../../_shared/homepageBlocks.js';
+import { ensureBlock, moveBlockAfter, moveBlockToFront } from '../../../../_shared/homepageBlocks.js';
 import { getLandingPage } from '../../../models/agility.model.js';
 
 export const loader = async () => {
 	const page = await getLandingPage('home');
-	const blocks = normalizeHomepageBlocks(Array.isArray(page?.blocks) ? page.blocks : [], 'agility-demo');
+	const blocks = Array.isArray(page?.blocks) ? [...page.blocks] : [];
+
+	ensureBlock(blocks, 'product_search', () => ({
+		type: 'product_search',
+		islandKey: 'product_search',
+		hydrate: 'immediate',
+	}));
+	ensureBlock(blocks, 'cart_mini', () => ({
+		type: 'cart_mini',
+		islandKey: 'cart',
+		hydrate: 'immediate',
+	}));
+	ensureBlock(blocks, 'carousel', () => getCarouselBlock('agility-demo'));
+
+	const arrangedBlocks = blocks.some((block) => block.type === 'hero')
+		? moveBlockAfter(moveBlockAfter(blocks, 'product_search', 'hero'), 'carousel', 'product_search')
+		: moveBlockAfter(moveBlockToFront(blocks, 'product_search'), 'carousel', 'product_search');
 
 	return {
 		page: {
-			title: page?.title || 'Agility Demo',
-			blocks,
+			title: page?.title || 'Agility',
+			blocks: arrangedBlocks,
 		},
 	};
 };
 
-export const head = (props) => ({ title: props.page?.title || 'Agility Demo' });
+export const head = (props) => ({ title: props.page?.title || 'Agility' });
 
 export const Page = ({ page }) => {
 	return (

@@ -17,18 +17,40 @@ const surfSlides = [
 		body: 'Soft OKLab highlights and a glossy shell for quick carousel checks.',
 		image: '/demo-images/liquid-glass-goggles.jpg',
 	},
+	{
+		eyebrow: 'Deck pad',
+		title: 'Sea Foam Traction',
+		body: 'An extra frame so the pinned rail has real forward motion on wide screens.',
+		image: '/demo-images/liquid-glass-board.jpg',
+	},
+	{
+		eyebrow: 'Wax kit',
+		title: 'Cloud Wax Set',
+		body: 'Another surf-ready pane to keep the scrolling rail useful after the sticky lead card.',
+		image: '/demo-images/liquid-glass-fins.jpg',
+	},
+	{
+		eyebrow: 'Travel',
+		title: 'Drift Board Bag',
+		body: 'Adds enough depth for multi-pane scrolling and arrow controls to stay meaningful.',
+		image: '/demo-images/liquid-glass-goggles.jpg',
+	},
 ];
 
-export const getDemoCarouselBlock = (demo) => {
+export const getCarouselBlock = (demo) => {
 	if (demo === 'test-data-demo') {
 		return {
 			type: 'carousel',
 			title: 'Surf Carousel Lab',
 			variant: 'pin-first-marquee',
-			accentIconSrc: '/demo-images/glass-surf-icon.svg',
 			options: {
 				pauseOnHover: true,
-				freezeFirstFrame: true,
+				stickyPaneCount: 1,
+				visibleScrollPanes: 2,
+				stickySlideSizeRatio: '2:1',
+				minHeight: 350,
+				maxHeight: 450,
+				slideImageTextRatio: [3, 2],
 				showArrows: true,
 				showDots: false,
 				autoPlayMs: 0,

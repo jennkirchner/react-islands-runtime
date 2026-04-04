@@ -1,7 +1,7 @@
 import React from 'react';
 import { ThemeModeSwitch } from '../../../../_shared/components/ThemeModeSwitch.jsx';
 
-export const loader = async () => ({ siteName: 'contentstack-demo' });
+export const loader = async () => ({ siteName: 'Contentstack' });
 
 export const head = (props) => ({ title: props.siteName });
 

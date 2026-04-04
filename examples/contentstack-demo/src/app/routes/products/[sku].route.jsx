@@ -9,7 +9,7 @@ export const loader = async ({ params }) => {
 			sku: params.sku,
 			name: `Product ${params.sku}`,
 			price: 3.99,
-			description: 'Demo product details.',
+			description: 'Product details.',
 		},
 	};
 };

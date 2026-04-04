@@ -1,7 +1,7 @@
 import React from 'react';
 import { ThemeModeSwitch } from '../../../../_shared/components/ThemeModeSwitch.jsx';
 
-export const loader = async () => ({ siteName: 'commercetools-demo' });
+export const loader = async () => ({ siteName: 'Commercetools' });
 
 export const head = (props) => ({ title: props.siteName });
 

@@ -3,8 +3,9 @@ import { Island, resolveIslandModule } from 'react-islands-runtime/ssr';
 
 import CartSSR from '../../../../_shared/runtime/src/islands/Cart.ssr.jsx';
 import ProductSearchSSR from '../../../../_shared/runtime/src/islands/ProductSearch.ssr.jsx';
+import { getCarouselBlock } from '../../../../_shared/carousels.js';
 import { CarouselBlock } from '../../../../_shared/components/CarouselBlock.jsx';
-import { normalizeHomepageBlocks } from '../../../../_shared/homepageBlocks.js';
+import { ensureBlock, moveBlockAfter, moveBlockToFront } from '../../../../_shared/homepageBlocks.js';
 import { getLandingPage, getHeroBanners } from '../../../models/contentstack.model.js';
 
 export const loader = async () => {
@@ -21,12 +22,28 @@ export const loader = async () => {
 		}));
 	}
 
-	const blocks = normalizeHomepageBlocks([...rawBlocks, ...heroBlocks], 'contentstack-commercetools-demo');
+	const blocks = [...rawBlocks, ...heroBlocks];
+
+	ensureBlock(blocks, 'product_search', () => ({
+		type: 'product_search',
+		islandKey: 'product_search',
+		hydrate: 'immediate',
+	}));
+	ensureBlock(blocks, 'cart_mini', () => ({
+		type: 'cart_mini',
+		islandKey: 'cart',
+		hydrate: 'immediate',
+	}));
+	ensureBlock(blocks, 'carousel', () => getCarouselBlock('contentstack-commercetools-demo'));
+
+	const arrangedBlocks = blocks.some((block) => block.type === 'hero')
+		? moveBlockAfter(moveBlockAfter(blocks, 'product_search', 'hero'), 'carousel', 'product_search')
+		: moveBlockAfter(moveBlockToFront(blocks, 'product_search'), 'carousel', 'product_search');
 
 	return {
 		page: {
 			title: page?.title || 'Contentstack + Commercetools',
-			blocks,
+			blocks: arrangedBlocks,
 		},
 	};
 };

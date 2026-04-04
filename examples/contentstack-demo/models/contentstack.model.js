@@ -51,7 +51,7 @@ const getContentTypeUid = (name, fallback) => {
 const LANDING_SLUG_FIELD = process.env.CONTENTSTACK_LANDING_SLUG_FIELD || 'slug';
 
 const getFallbackPage = (slug = 'home') => ({
-	title: slug === 'home' ? 'Contentstack Demo' : 'Page',
+	title: slug === 'home' ? 'Contentstack' : 'Page',
 	blocks: [
 		{
 			type: 'hero',
