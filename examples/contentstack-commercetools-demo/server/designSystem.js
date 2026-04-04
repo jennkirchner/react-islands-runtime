@@ -1,5 +1,6 @@
 import { defineTheme } from 'react-islands-runtime/ssr';
 
+import { carouselStyles } from '../../_shared/components/CarouselBlock.styles.js';
 import { createAppThemeFeature, createAppThemeModeFeature, createSharedStyles } from '../../_shared/design-system/base.js';
 
 const theme = defineTheme({
@@ -28,7 +29,7 @@ const theme = defineTheme({
 	},
 	documentProps: {
 		htmlAttrs: { 'data-demo-theme': 'contentstack-commercetools' },
-		styles: createSharedStyles(),
+		styles: createSharedStyles(carouselStyles),
 	},
 	modes: {
 		dark: {

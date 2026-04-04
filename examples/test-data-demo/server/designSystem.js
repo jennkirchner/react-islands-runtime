@@ -1,5 +1,6 @@
 import { defineTheme } from 'react-islands-runtime/ssr';
 
+import { carouselStyles } from '../../_shared/components/CarouselBlock.styles.js';
 import { createAppThemeFeature, createAppThemeModeFeature, createSharedStyles } from '../../_shared/design-system/base.js';
 
 const testDataStyles = `
@@ -82,7 +83,7 @@ const theme = defineTheme({
 	},
 	documentProps: {
 		htmlAttrs: { 'data-demo-theme': 'test-data' },
-		styles: createSharedStyles(testDataStyles),
+		styles: createSharedStyles(carouselStyles, testDataStyles),
 	},
 	modes: {
 		dark: {
