@@ -2,7 +2,7 @@ import { ClientBuilder } from '@commercetools/ts-client';
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 
 const parseBool = (value) => /^(1|true|yes)$/i.test(String(value || ''));
-const isDemoMode = parseBool(process.env.USE_DEMO_DATA);
+const isAppDataMode = parseBool(process.env.USE_APP_DATA);
 
 const { CTP_PROJECT_KEY, CTP_CLIENT_ID, CTP_CLIENT_SECRET, CTP_SCOPES, CTP_REGION } = process.env;
 
@@ -11,13 +11,13 @@ let projectKey = CTP_PROJECT_KEY || null;
 
 const hasCredentials = Boolean(CTP_PROJECT_KEY && CTP_CLIENT_ID && CTP_CLIENT_SECRET && CTP_SCOPES && CTP_REGION);
 
-if (!isDemoMode && !hasCredentials) {
+if (!isAppDataMode && !hasCredentials) {
 	console.warn(
-		'[commercetools] Missing required env vars; falling back to demo data. Set USE_DEMO_DATA=false and provide creds to enable commercetools.',
+		'[commercetools] Missing required env vars; falling back to local app data. Set USE_APP_DATA=false and provide creds to enable commercetools.',
 	);
 }
 
-if (!isDemoMode && hasCredentials) {
+if (!isAppDataMode && hasCredentials) {
 	const scopes = CTP_SCOPES.split(' ').filter(Boolean);
 	const regionHost = CTP_REGION.includes('.') ? CTP_REGION : `${CTP_REGION}.gcp`;
 
@@ -47,8 +47,8 @@ if (!isDemoMode && hasCredentials) {
 		projectKey: CTP_PROJECT_KEY,
 	});
 } else {
-	projectKey = projectKey || 'demo';
-	console.warn('[commercetools] Demo mode enabled; using demo data.');
+	projectKey = projectKey || 'local';
+	console.warn('[commercetools] Local app data mode enabled.');
 }
 
-export { apiRoot, projectKey as CTP_PROJECT_KEY, isDemoMode };
+export { apiRoot, projectKey as CTP_PROJECT_KEY, isAppDataMode };

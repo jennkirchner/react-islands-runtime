@@ -226,9 +226,9 @@ export const head: RouteHead<PageProps, AppContext> = (props) => ({
 });
 
 const theme = defineTheme({
-	name: 'demo',
+	name: 'app',
 	documentProps: {
-		htmlAttrs: { 'data-demo-theme': 'demo' },
+		htmlAttrs: { 'data-app-theme': 'app' },
 	} satisfies DocumentProps,
 });
 

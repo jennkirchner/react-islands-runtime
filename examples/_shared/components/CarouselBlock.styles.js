@@ -1,5 +1,25 @@
 export const carouselStyles = `
 	.carousel {
+		--carousel-gap: 18px;
+		--carousel-scrollbar-size: 10px;
+		--carousel-scrollbar-thumb: color-mix(in oklab, var(--surface-shadow) 22%, transparent);
+		--carousel-scrollbar-thumb-hover: color-mix(in oklab, var(--surface-shadow) 34%, transparent);
+		--carousel-scrollbar-track: color-mix(in oklab, var(--surface-muted) 55%, transparent);
+		--carousel-control-bg: var(--surface-panel);
+		--carousel-control-border: var(--border-subtle);
+		--carousel-control-shadow: color-mix(in oklab, var(--surface-shadow) 12%, transparent);
+		--carousel-control-shadow-disabled: color-mix(in oklab, var(--surface-shadow) 6%, transparent);
+		--carousel-card-bg: var(--surface-panel);
+		--carousel-card-border: var(--border-subtle);
+		--carousel-card-shadow: color-mix(in oklab, var(--surface-shadow) 10%, transparent);
+		--carousel-dot-bg: color-mix(in oklab, var(--border-subtle) 90%, transparent);
+		--carousel-dot-border: var(--surface-panel);
+		--carousel-dot-active-ring: color-mix(in oklab, var(--surface-accent) 18%, transparent);
+		--carousel-focus-ring: var(--surface-accent);
+		--carousel-viewport-bg: var(--surface-panel);
+		--carousel-viewport-border: var(--border-subtle);
+		--carousel-accent-bg: var(--surface-panel);
+		--carousel-accent-shadow: color-mix(in oklab, var(--surface-shadow) 18%, transparent);
 		display: grid;
 		gap: 16px;
 		container-type: inline-size;
@@ -37,22 +57,34 @@ export const carouselStyles = `
 		block-size: 2.75rem;
 		display: inline-grid;
 		place-items: center;
-		border-radius: var(--radius-pill, 999px);
-		background: color-mix(in srgb, var(--surface-panel) 76%, white);
-		border: 1px solid var(--border-subtle);
+		border-radius: var(--radius-surface, 24px);
+		background: var(--carousel-control-bg);
+		border: 1px solid var(--carousel-control-border);
 		color: var(--text-primary);
 		font: inherit;
 		font-size: 1.3rem;
 		font-weight: 700;
 		line-height: 1;
-		box-shadow:
-			0 12px 26px color-mix(in srgb, var(--surface-shadow) 12%, transparent),
-			inset 0 1px 0 color-mix(in srgb, white 58%, transparent);
+		box-shadow: 0 12px 26px var(--carousel-control-shadow);
 		transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
 	}
 
 	.carousel__control:hover {
 		transform: translateY(-1px);
+	}
+
+	.carousel__control:focus-visible,
+	.carousel__scroller:focus-visible,
+	.carousel__dot:focus-visible {
+		outline: 2px solid var(--carousel-focus-ring);
+		outline-offset: 2px;
+	}
+
+	.carousel__control:disabled {
+		cursor: not-allowed;
+		opacity: 0.45;
+		transform: none;
+		box-shadow: 0 6px 14px var(--carousel-control-shadow-disabled);
 	}
 
 	.carousel__viewport {
@@ -87,29 +119,28 @@ export const carouselStyles = `
 
 	.carousel__scroller {
 		/*
-			Use case: carousels should keep scroll affordance for mouse/trackpad users
-			without turning the whole rail into a permanently heavy classic scrollbar.
+			Media-scroller baseline: CSS owns the rail behavior, JS only drives
+			arrow fallback state and scroll commands.
 		*/
-		--carousel-scrollbar-size: 10px;
-		--carousel-scrollbar-thumb: color-mix(in oklab, var(--surface-shadow) 22%, transparent);
-		--carousel-scrollbar-thumb-hover: color-mix(in oklab, var(--surface-shadow) 34%, transparent);
-		--carousel-scrollbar-track: color-mix(in oklab, var(--surface-muted) 55%, transparent);
 		display: grid;
 		grid-auto-flow: column;
 		grid-auto-columns: minmax(min(84cqi, 22rem), 1fr);
-		gap: 18px;
+		gap: var(--carousel-gap);
 		padding: 0 0 10px;
 		overflow-x: auto;
 		overflow-y: visible;
+		-webkit-overflow-scrolling: touch;
+		touch-action: pan-x pinch-zoom;
+		overscroll-behavior-x: contain;
 		overscroll-behavior-inline: contain;
 		scroll-snap-type: inline mandatory;
 		scroll-padding-inline: 0;
 		scroll-behavior: smooth;
-		scrollbar-gutter: stable;
+		scrollbar-gutter: stable both-edges;
 		align-items: start;
 	}
 
-	@supports (scrollbar-width: auto) {
+	@supports (scrollbar-width: thin) {
 		.carousel__scroller {
 			scrollbar-width: thin;
 			scrollbar-color: transparent transparent;
@@ -171,7 +202,7 @@ export const carouselStyles = `
 
 	.carousel__scroller--rail {
 		grid-auto-columns: calc(
-			(100% - (var(--carousel-visible-slides, 1) - 1) * 18px) / var(--carousel-visible-slides, 1)
+			(100% - (var(--carousel-visible-slides, 1) - 1) * var(--carousel-gap)) / var(--carousel-visible-slides, 1)
 		);
 		align-items: stretch;
 	}
@@ -184,12 +215,10 @@ export const carouselStyles = `
 		container-type: inline-size;
 		gap: 16px;
 		padding: 16px;
-		border-radius: var(--radius-card, 24px);
-		border: 1px solid var(--border-subtle);
-		background:
-			linear-gradient(180deg, color-mix(in srgb, white 20%, transparent), transparent 38%),
-			color-mix(in srgb, var(--surface-panel) 78%, white);
-		box-shadow: inset 0 1px 0 color-mix(in srgb, white 54%, transparent);
+		border-radius: var(--radius-surface, 24px);
+		border: 1px solid var(--carousel-card-border);
+		background: var(--carousel-card-bg);
+		box-shadow: 0 10px 24px var(--carousel-card-shadow);
 		min-height: 100%;
 		scroll-snap-align: start;
 		scroll-snap-stop: always;
@@ -201,7 +230,7 @@ export const carouselStyles = `
 
 	.carousel__media {
 		overflow: clip;
-		border-radius: calc(var(--radius-card, 24px) - 8px);
+		border-radius: var(--radius-image, 16px);
 		aspect-ratio: 16 / 10;
 		isolation: isolate;
 		min-block-size: 0;
@@ -243,15 +272,15 @@ export const carouselStyles = `
 		width: 11px;
 		height: 11px;
 		border-radius: 999px;
-		background: color-mix(in srgb, var(--border-subtle) 90%, transparent);
-		border: 1px solid color-mix(in srgb, var(--surface-panel) 65%, white);
+		background: var(--carousel-dot-bg);
+		border: 1px solid var(--carousel-dot-border);
 		transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
 	}
 
 	.carousel__dot[data-active="true"] {
 		transform: scale(1.18);
 		background: var(--surface-accent);
-		box-shadow: 0 0 0 4px color-mix(in srgb, var(--surface-accent) 18%, transparent);
+		box-shadow: 0 0 0 4px var(--carousel-dot-active-ring);
 	}
 
 	.carousel--peek-strip .carousel__scroller {
@@ -264,12 +293,9 @@ export const carouselStyles = `
 
 	.carousel--pin-first-marquee .carousel__viewport {
 		padding: 16px 16px 28px;
-		border-radius: calc(var(--radius-card, 24px) + 8px);
-		background:
-			linear-gradient(180deg, color-mix(in oklab, white 22%, transparent), transparent 82%),
-			color-mix(in oklab, var(--surface-panel) 72%, white);
-		border: 1px solid color-mix(in oklab, var(--border-subtle) 88%, white);
-		box-shadow: inset 0 1px 0 color-mix(in oklab, white 55%, transparent);
+		border-radius: calc(var(--radius-surface, 24px) + 8px);
+		background: var(--carousel-viewport-bg);
+		border: 1px solid var(--carousel-viewport-border);
 	}
 
 	.carousel--pin-first-marquee .carousel__accent {
@@ -293,7 +319,6 @@ export const carouselStyles = `
 		flex-direction: column;
 		block-size: 100%;
 		min-block-size: 0;
-		box-shadow: inset 0 1px 0 color-mix(in oklab, white 54%, transparent);
 	}
 
 	.carousel--pin-first-marquee .carousel__media {
@@ -368,11 +393,9 @@ export const carouselStyles = `
 		width: 56px;
 		height: 56px;
 		padding: 6px;
-		border-radius: 20px;
-		background: color-mix(in oklab, var(--surface-panel) 70%, white);
-		box-shadow:
-			0 14px 28px color-mix(in oklab, var(--surface-shadow) 18%, transparent),
-			inset 0 1px 0 color-mix(in oklab, white 54%, transparent);
+		border-radius: var(--radius-image, 16px);
+		background: var(--carousel-accent-bg);
+		box-shadow: 0 14px 28px var(--carousel-accent-shadow);
 		backdrop-filter: blur(14px) saturate(1.12);
 	}
 

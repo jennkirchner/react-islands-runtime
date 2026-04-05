@@ -50,60 +50,132 @@ const parseStickySlideSizeRatio = (value) => {
 
 const getSlideElements = (scroller) => Array.from(scroller?.querySelectorAll('[data-carousel-slide]') || []);
 
-const scrollToSlide = (scroller, nextIndex) => {
-	const slides = getSlideElements(scroller);
-	const target = slides[nextIndex];
-	if (!target) return;
+const getPageStartIndexes = (maxIndex, pageStep) => {
+	const safeMaxIndex = Math.max(0, maxIndex);
+	const safePageStep = Math.max(1, pageStep);
+	const indexes = [];
 
-	scroller.scrollTo({
-		left: target.offsetLeft - scroller.offsetLeft,
-		behavior: 'smooth',
-	});
+	for (let nextIndex = 0; nextIndex <= safeMaxIndex; nextIndex += safePageStep) {
+		indexes.push(nextIndex);
+	}
+
+	if (indexes[indexes.length - 1] !== safeMaxIndex) {
+		indexes.push(safeMaxIndex);
+	}
+
+	return indexes;
 };
 
-const useCarouselState = ({ count, autoPlayMs, pauseOnHover, enabledDots, scrollerRef }) => {
+const getScrollLeftForIndex = (scroller, targetIndex, maxIndex) => {
+	const slides = getSlideElements(scroller);
+	if (!slides.length) return 0;
+
+	const maxScrollLeft = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+	if (targetIndex <= 0) return 0;
+	if (targetIndex >= maxIndex) return maxScrollLeft;
+
+	const target = slides[targetIndex];
+	if (!target) return maxScrollLeft;
+
+	const scrollerRect = scroller.getBoundingClientRect();
+	const targetRect = target.getBoundingClientRect();
+	return Math.min(maxScrollLeft, targetRect.left - scrollerRect.left + scroller.scrollLeft);
+};
+
+const getNearestCarouselIndex = (scroller, maxIndex, pageStep) => {
+	if (maxIndex <= 0) return 0;
+
+	return getPageStartIndexes(maxIndex, pageStep).reduce(
+		(best, candidateIndex) => {
+			const distance = Math.abs(getScrollLeftForIndex(scroller, candidateIndex, maxIndex) - scroller.scrollLeft);
+			return distance < best.distance ? { index: candidateIndex, distance } : best;
+		},
+		{ index: 0, distance: Number.POSITIVE_INFINITY },
+	).index;
+};
+
+const getScrollNavigationState = (scroller, maxIndex, pageStep) => {
+	const pageIndexes = getPageStartIndexes(maxIndex, pageStep);
+	const index = getNearestCarouselIndex(scroller, maxIndex, pageStep);
+	const pagePosition = pageIndexes.indexOf(index);
+
+	return {
+		index,
+		canGoPrev: pagePosition > 0,
+		canGoNext: pagePosition < pageIndexes.length - 1,
+		pageIndexes,
+		pagePosition,
+	};
+};
+
+const scrollToPosition = (scroller, left) => {
+	if (!scroller) return false;
+	scroller.scrollTo({
+		left,
+		behavior: 'smooth',
+	});
+	return true;
+};
+
+const useCarouselState = ({ count, maxIndex, pageStep, autoPlayMs, pauseOnHover, enabledDots, scrollerRef }) => {
 	const [index, setIndex] = useState(0);
 	const [paused, setPaused] = useState(false);
+	const scrollSettledTimerRef = useRef(null);
 
 	useEffect(() => {
 		const scroller = scrollerRef.current;
 		if (!scroller || count <= 1) return undefined;
 
-		const slides = getSlideElements(scroller);
-		if (!slides.length) return undefined;
+		const syncIndexFromScroll = () => {
+			const nextState = getScrollNavigationState(scroller, maxIndex, pageStep);
+			setIndex(nextState.index);
+		};
 
-		const observer = new IntersectionObserver(
-			(entries) => {
-				const current = entries
-					.filter((entry) => entry.isIntersecting)
-					.sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-				if (!current) return;
-				const nextIndex = Number(current.target.getAttribute('data-carousel-index'));
-				if (Number.isFinite(nextIndex)) setIndex(nextIndex);
-			},
-			{
-				root: scroller,
-				threshold: [0.6, 0.9],
-			},
-		);
+		const updateIndexFromScroll = () => {
+			window.clearTimeout(scrollSettledTimerRef.current);
+			scrollSettledTimerRef.current = window.setTimeout(() => {
+				syncIndexFromScroll();
+			}, 120);
+		};
 
-		slides.forEach((slide) => observer.observe(slide));
-		return () => observer.disconnect();
-	}, [count, scrollerRef]);
+		syncIndexFromScroll();
+		scroller.addEventListener('scroll', updateIndexFromScroll, { passive: true });
+		if ('onscrollend' in window) {
+			scroller.addEventListener('scrollend', syncIndexFromScroll);
+		}
+		return () => {
+			window.clearTimeout(scrollSettledTimerRef.current);
+			scroller.removeEventListener('scroll', updateIndexFromScroll);
+			if ('onscrollend' in window) {
+				scroller.removeEventListener('scrollend', syncIndexFromScroll);
+			}
+		};
+	}, [count, maxIndex, pageStep, scrollerRef]);
+
+	useEffect(() => {
+		if (count <= 1) {
+			setIndex(0);
+		}
+	}, [count]);
 
 	useEffect(() => {
 		if (!enabledDots || count <= 1 || autoPlayMs <= 0 || paused) return undefined;
 		const timer = window.setInterval(() => {
-			const nextIndex = (index + 1) % count;
-			scrollToSlide(scrollerRef.current, nextIndex);
+			const scroller = scrollerRef.current;
+			const pageIndexes = getPageStartIndexes(maxIndex, pageStep);
+			const pagePosition = pageIndexes.indexOf(index);
+			const nextIndex = pagePosition >= pageIndexes.length - 1 ? 0 : pageIndexes[pagePosition + 1];
+			scrollToPosition(scroller, getScrollLeftForIndex(scroller, nextIndex, maxIndex));
+			setIndex(nextIndex);
 		}, autoPlayMs);
 
 		return () => window.clearInterval(timer);
-	}, [autoPlayMs, count, enabledDots, index, paused, scrollerRef]);
+	}, [autoPlayMs, count, enabledDots, index, maxIndex, pageStep, paused, scrollerRef]);
 
 	return {
 		index,
 		paused,
+		setIndex,
 		setPaused: pauseOnHover ? setPaused : () => {},
 	};
 };
@@ -136,6 +208,7 @@ const Carousel = ({
 		autoPlayMs = 3200,
 		showDots = false,
 		showArrows = true,
+		loopNavButtons = false,
 		pauseOnHover = true,
 		stickyPaneCount = 0,
 		visibleScrollPanes = 1,
@@ -152,8 +225,13 @@ const Carousel = ({
 	const stickySlideSizeRatio = parseStickySlideSizeRatio(options.stickySlideSizeRatio);
 	const scrollerRef = useRef(null);
 	const count = scrollSlides.length;
-	const { index, paused, setPaused } = useCarouselState({
+	const maxVisiblePanes = spotlight ? 1 : Math.max(1, visibleScrollPanes);
+	const pageStep = maxVisiblePanes;
+	const maxIndex = Math.max(0, count - maxVisiblePanes);
+	const { index, paused, setIndex, setPaused } = useCarouselState({
 		count,
+		maxIndex,
+		pageStep,
 		autoPlayMs,
 		pauseOnHover,
 		enabledDots: spotlight,
@@ -162,15 +240,39 @@ const Carousel = ({
 
 	if (!slides.length) return null;
 
+	const pageIndexes = getPageStartIndexes(maxIndex, pageStep);
+	const pagePosition = pageIndexes.indexOf(index);
+	const canGoPrev = loopNavButtons ? count > 1 : pagePosition > 0;
+	const canGoNext = loopNavButtons ? count > 1 : pagePosition < pageIndexes.length - 1;
+
 	const goPrev = () => {
-		if (count <= 1) return;
-		scrollToSlide(scrollerRef.current, (index - 1 + count) % count);
+		const scroller = scrollerRef.current;
+		if (!scroller) return;
+
+		if (!canGoPrev) return;
+		const nextIndex = loopNavButtons
+			? pageIndexes[(pagePosition - 1 + pageIndexes.length) % pageIndexes.length]
+			: pageIndexes[Math.max(0, pagePosition - 1)];
+		if (scrollToPosition(scroller, getScrollLeftForIndex(scroller, nextIndex, maxIndex))) {
+			setIndex(nextIndex);
+		}
 	};
 
 	const goNext = () => {
-		if (count <= 1) return;
-		scrollToSlide(scrollerRef.current, (index + 1) % count);
+		const scroller = scrollerRef.current;
+		if (!scroller) return;
+
+		if (!canGoNext) return;
+		const nextIndex = loopNavButtons
+			? pageIndexes[(pagePosition + 1) % pageIndexes.length]
+			: pageIndexes[Math.min(pageIndexes.length - 1, pagePosition + 1)];
+		if (scrollToPosition(scroller, getScrollLeftForIndex(scroller, nextIndex, maxIndex))) {
+			setIndex(nextIndex);
+		}
 	};
+
+	const prevDisabled = loopNavButtons ? count <= 1 : !canGoPrev;
+	const nextDisabled = loopNavButtons ? count <= 1 : !canGoNext;
 
 	return (
 		<div
@@ -182,10 +284,22 @@ const Carousel = ({
 				<h2 className="carousel__title">{title}</h2>
 				{showArrows && count > 0 ? (
 					<div className="carousel__controls">
-						<button type="button" className="carousel__control" onClick={goPrev} aria-label="Previous slide">
+						<button
+							type="button"
+							className="carousel__control"
+							onClick={goPrev}
+							aria-label="Previous slide"
+							disabled={prevDisabled}
+						>
 							<span aria-hidden="true">‹</span>
 						</button>
-						<button type="button" className="carousel__control" onClick={goNext} aria-label="Next slide">
+						<button
+							type="button"
+							className="carousel__control"
+							onClick={goNext}
+							aria-label="Next slide"
+							disabled={nextDisabled}
+						>
 							<span aria-hidden="true">›</span>
 						</button>
 					</div>
@@ -240,6 +354,9 @@ const Carousel = ({
 							spotlight && 'carousel__scroller--spotlight',
 							hasPinnedPane && 'carousel__scroller--rail',
 						)}
+						tabIndex={0}
+						role="region"
+						aria-label={`${title} carousel`}
 					>
 						{scrollSlides.map((slide, slideIndex) => (
 							<SlideCard
@@ -264,7 +381,12 @@ const Carousel = ({
 							className="carousel__dot"
 							data-active={slideIndex === index ? 'true' : 'false'}
 							aria-label={`Go to slide ${slideIndex + 1}`}
-							onClick={() => scrollToSlide(scrollerRef.current, slideIndex)}
+							onClick={() => {
+								const scroller = scrollerRef.current;
+								if (scrollToPosition(scroller, getScrollLeftForIndex(scroller, slideIndex, maxIndex))) {
+									setIndex(slideIndex);
+								}
+							}}
 						/>
 					))}
 				</div>

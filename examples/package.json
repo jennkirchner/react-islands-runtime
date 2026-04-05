@@ -6,16 +6,16 @@
 	"scripts": {
 		"dev:client": "vite --config vite.client.config.js",
 		"build:client": "node scripts/build.mjs",
-		"dev:contentstack-demo": "cross-env NODE_ENV=development nodemon --watch contentstack-demo --ext js,jsx --exec \"node --loader @esbuild-kit/esm-loader contentstack-demo/server/index.js\"",
-		"dev:commercetools-demo": "cross-env NODE_ENV=development nodemon --watch commercetools-demo --ext js,jsx --exec \"node --loader @esbuild-kit/esm-loader commercetools-demo/server/index.js\"",
-		"dev:agility-demo": "cross-env NODE_ENV=development nodemon --watch agility-demo --ext js,jsx --exec \"node --loader @esbuild-kit/esm-loader agility-demo/server/index.js\"",
-		"dev:test-data-demo": "cross-env NODE_ENV=development nodemon --watch test-data-demo --ext js,jsx --exec \"node --loader @esbuild-kit/esm-loader test-data-demo/server/index.js\"",
-		"dev:contentstack-commercetools-demo": "cross-env NODE_ENV=development nodemon --watch contentstack-commercetools-demo --ext js,jsx --exec \"node --loader @esbuild-kit/esm-loader contentstack-commercetools-demo/server/index.js\"",
-		"dev:contentstack": "cross-env DEMO_TARGET=contentstack node scripts/dev-run.mjs",
-		"dev:commercetools": "cross-env DEMO_TARGET=commercetools node scripts/dev-run.mjs",
-		"dev:agility": "cross-env DEMO_TARGET=agility node scripts/dev-run.mjs",
-		"dev:test-data": "cross-env DEMO_TARGET=test-data node scripts/dev-run.mjs",
-		"dev:contentstack-commercetools": "cross-env DEMO_TARGET=contentstack-commercetools node scripts/dev-run.mjs"
+		"serve:contentstack": "cross-env NODE_ENV=development nodemon --watch contentstack --ext js,jsx --exec \"node --loader @esbuild-kit/esm-loader contentstack/server/index.js\"",
+		"serve:commercetools": "cross-env NODE_ENV=development nodemon --watch commercetools --ext js,jsx --exec \"node --loader @esbuild-kit/esm-loader commercetools/server/index.js\"",
+		"serve:agility": "cross-env NODE_ENV=development nodemon --watch agility --ext js,jsx --exec \"node --loader @esbuild-kit/esm-loader agility/server/index.js\"",
+		"serve:test-data": "cross-env NODE_ENV=development nodemon --watch test-data --ext js,jsx --exec \"node --loader @esbuild-kit/esm-loader test-data/server/index.js\"",
+		"serve:contentstack-commercetools": "cross-env NODE_ENV=development nodemon --watch contentstack-commercetools --ext js,jsx --exec \"node --loader @esbuild-kit/esm-loader contentstack-commercetools/server/index.js\"",
+		"dev:contentstack": "cross-env APP_TARGET=contentstack node scripts/dev-run.mjs",
+		"dev:commercetools": "cross-env APP_TARGET=commercetools node scripts/dev-run.mjs",
+		"dev:agility": "cross-env APP_TARGET=agility node scripts/dev-run.mjs",
+		"dev:test-data": "cross-env APP_TARGET=test-data node scripts/dev-run.mjs",
+		"dev:contentstack-commercetools": "cross-env APP_TARGET=contentstack-commercetools node scripts/dev-run.mjs"
 	},
 	"dependencies": {
 		"@commercetools/platform-sdk": "^8.24.0",

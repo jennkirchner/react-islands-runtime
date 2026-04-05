@@ -1,35 +1,36 @@
-# Shared Examples
+# Shared Example Infrastructure
 
-This folder contains shared code for the demo applications under `examples/`.
+This folder contains the shared pieces used by the example apps under `examples/`.
 
 ## What Lives Here
 
-- `demoServer.js`: shared Express server bootstrap used by the demo apps
-- `design-system/base.js`: small shared helpers for wiring consumer-defined themes into the runtime
-- `runtime/`: example runtime entrypoints used while developing the demos in this repo
-- `components/`, `models/`, `demo-data/`, `public/`: shared example assets and utilities
+- `appServer.js`: shared Express app bootstrap
+- `app-data/`: local fixture data used by the checked-in apps
+- `components/`: reusable example components such as the theme switch and carousel block
+- `models/`: shared model helpers
+- `public/`: shared static assets
+- `runtime/`: local runtime entrypoints used while developing the apps in this repo
 
-## Design System Integration
+## Design System Shape
 
-The key idea is that `react-islands-runtime` expects the app to provide its own design system features.
+The runtime expects each app to provide its own theme features and document styles.
 
-- Imports from `react-islands-runtime/ssr` come from the package export surface
-- Each demo defines its own design system in its local `server/designSystem.js`
-- Those files show how a library consumer can define themes with `defineTheme(...)`
-- `examples/_shared/design-system/base.js` shows the small shared wiring helpers around `createDomainThemeFeature(...)` and `createThemeModeFeature(...)`
-- Those app-defined features are then passed into the runtime during rendering
+- app-level theme config lives in `examples/<app>/server/designSystem.js`
+- app-level shell and theme wiring lives in `examples/<app>/server/foundation.js`
+- reusable component styles, such as carousel and search styles, are imported explicitly by each app
+- theme tokens such as `radius.surface` and `radius.image` become CSS variables used by those components
 
-## Design System Flow
+## Request Flow
 
-For a demo like `examples/test-data-demo`:
+For an app like `examples/test-data`:
 
-1. `test-data-demo/server/index.js` imports `startDemoServer` from `examples/_shared/demoServer.js`
-2. `test-data-demo/server/index.js` imports `demoFeatures` from `test-data-demo/server/designSystem.js`
-3. `demoServer.js` receives those features and passes them to `loadAndCompose(...)`
-4. The design system is applied at render time for the app
+1. `server/index.js` imports `startAppServer` from `examples/_shared/appServer.js`
+2. `server/index.js` imports `appFeatures` from its local `server/designSystem.js`
+3. the shared app server passes those features into the runtime composition pipeline
+4. the app theme, CSS variables, and explicit component styles are applied during SSR
 
-## Why This Matters
+## Why This Split Exists
 
-If you update `react-islands-runtime/ssr`, you are changing packaged runtime helpers.
+Changes in `react-islands-runtime/ssr` affect the published runtime surface.
 
-If you update `examples/*-demo/server/designSystem.js`, you are changing that demo app's design system implementation, which is the same extension point library users would implement in their own app.
+Changes in `examples/<app>/server/designSystem.js` or `examples/<app>/server/foundation.js` affect only that app's implementation of the runtime extension points.

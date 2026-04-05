@@ -45,6 +45,22 @@ const parseStickySlideSizeRatio = (value) => {
 	return ratio ? { sticky: ratio.first, slide: ratio.second } : undefined;
 };
 
+const getPageStartIndexes = (maxIndex, pageStep) => {
+	const safeMaxIndex = Math.max(0, maxIndex);
+	const safePageStep = Math.max(1, pageStep);
+	const indexes = [];
+
+	for (let nextIndex = 0; nextIndex <= safeMaxIndex; nextIndex += safePageStep) {
+		indexes.push(nextIndex);
+	}
+
+	if (indexes[indexes.length - 1] !== safeMaxIndex) {
+		indexes.push(safeMaxIndex);
+	}
+
+	return indexes;
+};
+
 const SlideCard = ({ slide, index, cardClassName }) => (
 	<article
 		className={['carousel__slide', cardClassName].filter(Boolean).join(' ')}
@@ -73,6 +89,13 @@ const CarouselSSR = ({ title, slides = [], variant = 'peek-strip', accentIconSrc
 	const slideImageTextRatio = parseSlideImageTextRatio(options.slideImageTextRatio);
 	const stickySlideSizeRatio = parseStickySlideSizeRatio(options.stickySlideSizeRatio);
 	const spotlight = variant === 'spotlight-dots';
+	const maxVisiblePanes = spotlight ? 1 : visibleScrollPanes;
+	const loopNavButtons = options.loopNavButtons === true;
+	const pageStep = maxVisiblePanes;
+	const maxIndex = Math.max(0, scrollSlides.length - maxVisiblePanes);
+	const pageIndexes = getPageStartIndexes(maxIndex, pageStep);
+	const canGoPrev = loopNavButtons ? scrollSlides.length > 1 : false;
+	const canGoNext = loopNavButtons ? scrollSlides.length > 1 : pageIndexes.length > 1;
 
 	return (
 		<div className={`carousel carousel--${variant}`}>
@@ -80,10 +103,20 @@ const CarouselSSR = ({ title, slides = [], variant = 'peek-strip', accentIconSrc
 				<h2 className="carousel__title">{title}</h2>
 				{options.showArrows ? (
 					<div className="carousel__controls">
-						<button type="button" className="carousel__control" aria-label="Previous slide">
+						<button
+							type="button"
+							className="carousel__control"
+							aria-label="Previous slide"
+							disabled={!canGoPrev}
+						>
 							<span aria-hidden="true">‹</span>
 						</button>
-						<button type="button" className="carousel__control" aria-label="Next slide">
+						<button
+							type="button"
+							className="carousel__control"
+							aria-label="Next slide"
+							disabled={!canGoNext}
+						>
 							<span aria-hidden="true">›</span>
 						</button>
 					</div>
@@ -133,6 +166,9 @@ const CarouselSSR = ({ title, slides = [], variant = 'peek-strip', accentIconSrc
 						className={`carousel__scroller${
 							spotlight ? ' carousel__scroller--spotlight' : ''
 						}${hasPinnedPane ? ' carousel__scroller--rail' : ''}`}
+						tabIndex={0}
+						role="region"
+						aria-label={`${title} carousel`}
 					>
 						{scrollSlides.map((slide, index) => (
 							<SlideCard

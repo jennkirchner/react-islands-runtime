@@ -4,6 +4,30 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ProductSearchShell } from './ProductSearch.shell.jsx';
 
+const RECENT_SEARCHES_KEY = 'recentSearches';
+
+const normalizeRecentSearch = (entry) => {
+	if (!entry) return null;
+	if (typeof entry === 'string') {
+		return {
+			label: entry,
+			query: entry,
+			type: 'query',
+		};
+	}
+
+	if (typeof entry === 'object' && typeof entry.label === 'string') {
+		return {
+			label: entry.label,
+			query: entry.query || entry.label,
+			type: entry.type || 'query',
+			slug: entry.slug || null,
+		};
+	}
+
+	return null;
+};
+
 const ProductSearch = ({
 	endpoint = '/api/search/suggestions',
 	searchPageUrl = '/search',
@@ -31,9 +55,9 @@ const ProductSearch = ({
 
 	useEffect(() => {
 		try {
-			const stored = localStorage.getItem('recentSearches');
+			const stored = localStorage.getItem(RECENT_SEARCHES_KEY);
 			if (stored) {
-				setRecentSearches(JSON.parse(stored).slice(0, 5));
+				setRecentSearches(JSON.parse(stored).map(normalizeRecentSearch).filter(Boolean).slice(0, 5));
 			}
 		} catch (e) {
 			// ignore storage errors
@@ -47,14 +71,22 @@ const ProductSearch = ({
 	}, [autoFocus]);
 
 	const saveRecentSearch = useCallback(
-		(term) => {
+		(entry) => {
+			const nextEntry = normalizeRecentSearch(entry);
+			if (!nextEntry) return;
+
 			try {
-				const updated = [term, ...recentSearches.filter((s) => s.toLowerCase() !== term.toLowerCase())].slice(
-					0,
-					5,
-				);
+				const updated = [
+					nextEntry,
+					...recentSearches.filter(
+						(item) =>
+							item?.label?.toLowerCase() !== nextEntry.label.toLowerCase() ||
+							item?.type !== nextEntry.type ||
+							item?.slug !== nextEntry.slug,
+					),
+				].slice(0, 5);
 				setRecentSearches(updated);
-				localStorage.setItem('recentSearches', JSON.stringify(updated));
+				localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
 			} catch (e) {
 				// ignore storage errors
 			}
@@ -177,26 +209,53 @@ const ProductSearch = ({
 
 	const handleSuggestionClick = (suggestion) => {
 		if (suggestion.type === 'product' && suggestion.slug) {
-			saveRecentSearch(suggestion.text);
+			saveRecentSearch({
+				label: suggestion.text,
+				type: 'product',
+				slug: suggestion.slug,
+				query: suggestion.text,
+			});
 			window.location.href = `/products/${suggestion.slug}`;
 		} else if (suggestion.type === 'category' && suggestion.slug) {
+			saveRecentSearch({
+				label: suggestion.text,
+				type: 'category',
+				slug: suggestion.slug,
+				query: suggestion.text,
+			});
 			window.location.href = `/category/${suggestion.slug}`;
 		} else {
-			saveRecentSearch(suggestion.text);
+			saveRecentSearch({
+				label: suggestion.text,
+				type: 'query',
+				query: suggestion.text,
+			});
 			window.location.href = `${searchPageUrl}?q=${encodeURIComponent(suggestion.text)}`;
 		}
 	};
 
-	const handleRecentClick = (term) => {
-		setQuery(term);
-		window.location.href = `${searchPageUrl}?q=${encodeURIComponent(term)}`;
+	const handleRecentClick = (entry) => {
+		const recent = normalizeRecentSearch(entry);
+		if (!recent) return;
+
+		setQuery(recent.query);
+		if (recent.type === 'product' && recent.slug) {
+			window.location.href = `/products/${recent.slug}`;
+			return;
+		}
+		if (recent.type === 'category' && recent.slug) {
+			window.location.href = `/category/${recent.slug}`;
+			return;
+		}
+
+		window.location.href = `${searchPageUrl}?q=${encodeURIComponent(recent.query)}`;
 	};
 
 	const clearRecentSearches = (e) => {
 		e.stopPropagation();
 		setRecentSearches([]);
 		try {
-			localStorage.removeItem('recentSearches');
+			localStorage.removeItem(RECENT_SEARCHES_KEY);
 		} catch (err) {
 			// ignore storage errors
 		}
@@ -335,11 +394,11 @@ const ProductSearch = ({
 									</button>
 								</div>
 								<ul className="search-island__list">
-									{recentSearches.map((term, idx) => (
+									{recentSearches.map((entry, idx) => (
 										<li
-											key={term}
+											key={`${entry.type}-${entry.slug || entry.label}`}
 											className={`search-island__item ${idx === selectedIndex ? 'search-island__item--selected' : ''}`}
-											onClick={() => handleRecentClick(term)}
+											onClick={() => handleRecentClick(entry)}
 										>
 											<svg
 												className="search-island__item-icon"
@@ -353,7 +412,7 @@ const ProductSearch = ({
 												<circle cx="12" cy="12" r="10" />
 												<polyline points="12,6 12,12 16,14" />
 											</svg>
-											<span className="search-island__item-text">{term}</span>
+											<span className="search-island__item-text">{entry.label}</span>
 										</li>
 									))}
 								</ul>
