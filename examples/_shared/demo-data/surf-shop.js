@@ -14,6 +14,16 @@ const toPrice = (centAmount, currencyCode = 'USD') => ({
 	display: `$${(centAmount / 100).toFixed(2)}`,
 });
 
+const pickPreferredImage = (item) => {
+	const candidates = [item?.image, ...(Array.isArray(item?.images) ? item.images : [])].filter(Boolean);
+	return candidates.find((src) => src.endsWith('.jpg')) || candidates[0] || null;
+};
+
+const buildImageList = (item) => {
+	const candidates = [pickPreferredImage(item), ...(Array.isArray(item?.images) ? item.images : []), item?.image].filter(Boolean);
+	return [...new Set(candidates)];
+};
+
 const matchesQuery = (item, query) => {
 	if (!query) return true;
 	const q = query.toLowerCase();
@@ -34,8 +44,8 @@ export const listSurfProducts = ({ query = '', limit = 20, offset = 0, currencyC
 			sku: item.sku,
 			name: item.name,
 			description: item.description,
-			imageUrl: item.image,
-			images: Array.isArray(item.images) && item.images.length ? item.images : [item.image],
+			imageUrl: pickPreferredImage(item),
+			images: buildImageList(item),
 			price: toPrice(item.price, currencyCode),
 			tags: item.tags || [],
 		})),
@@ -54,8 +64,8 @@ export const getSurfProductBySku = (sku, currencyCode = 'USD') => {
 		sku: item.sku,
 		name: item.name,
 		description: item.description,
-		imageUrl: item.image,
-		images: Array.isArray(item.images) && item.images.length ? item.images : [item.image],
+		imageUrl: pickPreferredImage(item),
+		images: buildImageList(item),
 		price: toPrice(item.price, currencyCode),
 		tags: item.tags || [],
 	};
@@ -71,7 +81,7 @@ export const listSurfSuggestions = ({ query = '', limit = 8 } = {}) => {
 			type: 'product',
 			text: item.name,
 			slug: item.sku,
-			imageUrl: item.image,
+			imageUrl: pickPreferredImage(item),
 			price: `$${(item.price / 100).toFixed(2)}`,
 			sku: item.sku,
 		})),

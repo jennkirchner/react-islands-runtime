@@ -239,6 +239,40 @@ export const themeFeature = createDomainThemeFeature({
 });
 ```
 
+## Easier Design-System Setup
+
+If you just want to hand the runtime a design system and use it, the higher-level helper is simpler:
+
+```ts
+import { createDesignSystem, defineTheme } from 'react-islands-runtime/ssr';
+
+const theme = defineTheme({
+	name: 'demo',
+	themeColor: '#edf7f2',
+	tokens: {
+		surface: { canvas: '#edf7f2' },
+		text: { primary: '#143126' },
+	},
+	modes: {
+		dark: {
+			themeColor: '#101d18',
+			tokens: {
+				surface: { canvas: '#0d1512' },
+				text: { primary: '#eafaf2' },
+			},
+		},
+	},
+});
+
+const designSystem = createDesignSystem(theme, {
+	mode: { allowAuto: true },
+});
+
+designSystem.features;
+```
+
+This keeps the lower-level APIs available for advanced cases, while giving app code a single place to define theme tokens, document styles, and mode behavior.
+
 ## Practical Recommendation
 
 If you want the best TypeScript experience with this runtime:

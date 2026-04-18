@@ -1,10 +1,6 @@
-import { defineTheme } from 'react-islands-runtime/ssr';
+import { createDesignSystem, defineTheme } from 'react-islands-runtime/ssr';
 
-import {
-	createAppThemeFeature,
-	createAppThemeModeFeature,
-	createSharedStyles,
-} from '../../_shared/design-system/base.js';
+import { createSharedStyles } from '../../_shared/design-system/base.js';
 
 const contentstackCommercetoolsStyles = `
 	[data-demo-theme="contentstack-commercetools"] {
@@ -286,6 +282,54 @@ const contentstackCommercetoolsStyles = `
 		color: var(--grid-items-card-muted);
 	}
 
+	[data-demo-theme="contentstack-commercetools"] .plp-products__layout {
+		grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+		gap: 14px;
+	}
+
+	[data-demo-theme="contentstack-commercetools"] .plp-products__card {
+		display: flex;
+		align-items: stretch;
+		padding: 12px;
+		background:
+			linear-gradient(180deg, color-mix(in srgb, white 20%, transparent), transparent 86%),
+			color-mix(in srgb, var(--surface-panel) 90%, white);
+		border-radius: 18px;
+		box-shadow: 0 10px 24px color-mix(in srgb, var(--surface-shadow) 8%, transparent);
+	}
+
+	[data-demo-theme="contentstack-commercetools"] .plp-products__media {
+		flex: 0 0 64px;
+		inline-size: 64px;
+		block-size: 80px;
+		border-radius: 14px;
+		box-shadow: inset 0 1px 0 color-mix(in srgb, white 42%, transparent);
+	}
+
+	[data-demo-theme="contentstack-commercetools"] .plp-products__content {
+		align-content: center;
+	}
+
+	[data-demo-theme="contentstack-commercetools"] .plp-products__price {
+		border: 1px solid var(--grid-items-price-border);
+		background: var(--grid-items-price-bg);
+		color: var(--grid-items-price-text);
+		box-shadow: 0 6px 14px color-mix(in srgb, var(--surface-shadow) 10%, transparent);
+	}
+
+	[data-demo-theme="contentstack-commercetools"] .plp-products__item-title {
+		font-size: 0.94rem;
+		line-height: 1.06;
+		font-family: var(--font-heading);
+	}
+
+	[data-demo-theme="contentstack-commercetools"] .plp-products__description {
+		font-family: var(--font-ui);
+		font-size: 0.8rem;
+		line-height: 1.35;
+		color: var(--grid-items-card-muted);
+	}
+
 	@media (max-width: 900px) {
 		[data-demo-theme="contentstack-commercetools"] .grid-items[data-grid-items-layout="feature-first"] .grid-items__card--feature,
 		[data-demo-theme="contentstack-commercetools"] .grid-items[data-grid-items-layout="feature-first"] .grid-items__card--supporting,
@@ -448,4 +492,4 @@ const theme = defineTheme({
 	},
 });
 
-export const demoFeatures = [createAppThemeFeature(theme), createAppThemeModeFeature(theme)];
+export const { features: demoFeatures } = createDesignSystem(theme);

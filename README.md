@@ -47,6 +47,7 @@ Open `http://localhost:3004`.
 - `packages/ssr` public SSR entrypoint
 - `packages/islands` public client/islands entrypoint
 - `packages/rsc` public RSC-facing entrypoint
+- `packages/react-islands` reusable components package
 - `types` TypeScript declarations for the published package
 - `examples/_shared` shared demo server, design system, runtime helpers, and fixture data
 - `examples/*-demo` concrete example apps
@@ -59,13 +60,54 @@ The package currently exposes:
 - `react-islands-runtime/islands`
 - `react-islands-runtime/rsc`
 
+## Design Systems
+
+Apps can hand the runtime a single theme-backed design system and get the right render features back:
+
+```js
+import { createDesignSystem, defineTheme } from 'react-islands-runtime/ssr';
+
+const theme = defineTheme({
+	name: 'storefront',
+	themeColor: '#edf7f2',
+	tokens: {
+		surface: { canvas: '#edf7f2', panel: '#fbfffd' },
+		text: { primary: '#143126' },
+	},
+	documentProps: {
+		styles: [{ id: 'app-shell', cssText: 'body { margin: 0; }' }],
+	},
+	modes: {
+		dark: {
+			themeColor: '#101d18',
+			tokens: {
+				surface: { canvas: '#0d1512', panel: '#14221d' },
+				text: { primary: '#eafaf2' },
+			},
+		},
+	},
+});
+
+export const { features } = createDesignSystem(theme, {
+	mode: { allowAuto: true },
+});
+```
+
+That `features` array can be passed straight into `loadAndCompose(...)` or `createRenderRequest(...)`.
+
 TypeScript usage guide:
 
 - [docs/typescript.md](/Users/jkirchne/node_projects/react-islands-runtime/docs/typescript.md)
 
-The examples in this repo currently consume the local tarball:
+This repo now has two package surfaces:
 
-`examples/package.json` points to `file:../builds/react-islands-runtime-0.3.0.tgz`
+- `react-islands-runtime`: runtime, SSR helpers, manifest tooling, router helpers, and design-system APIs
+- `react-islands`: reusable UI components built on top of the runtime
+
+The examples in this repo currently consume both local packages:
+
+- `react-islands-runtime` from `file:../builds/react-islands-runtime-0.3.0.tgz`
+- `react-islands` from `file:../packages/react-islands`
 
 ## Environment Files
 
@@ -158,6 +200,8 @@ yarn pack --filename builds/react-islands-runtime-0.3.0.tgz
 ```
 
 If you refresh the tarball, also refresh the examples install so the demos pick up the new runtime code.
+
+To pack the component library, run `npm pack` from `packages/react-islands/`.
 
 ## Current Expectations
 

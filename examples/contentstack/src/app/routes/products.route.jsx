@@ -1,42 +1,37 @@
 import React from 'react';
+import { PlpProductsBlock } from 'react-islands';
+import { createPlpProductsBlock } from '../../../../_shared/productGridBlock.js';
 import { getProducts } from '../../../models/commercetools.client.js';
 
-const formatPrice = (price) => {
-	if (typeof price === 'number') return `$${price.toFixed(2)}`;
-	if (typeof price === 'string') return price;
-	if (price && typeof price === 'object') {
-		if (typeof price.display === 'string') return price.display;
-		if (typeof price.centAmount === 'number') return `$${(price.centAmount / 100).toFixed(2)}`;
-	}
-	return '$—';
-};
-
-const toView = (p) => ({
-	key: p.slug || p.sku || p.id,
-	sku: p.sku,
-	name: p.name || p.title || 'Product',
-	price: formatPrice(p.price),
-});
+const normalizeProducts = (products = []) =>
+	(Array.isArray(products) ? products : []).map((product) => ({
+		...product,
+		price:
+			typeof product?.price === 'number'
+				? { display: `$${product.price.toFixed(2)}` }
+				: typeof product?.price === 'string'
+					? { display: product.price }
+					: typeof product?.price?.display === 'string'
+						? product.price
+						: typeof product?.price?.centAmount === 'number'
+							? { ...product.price, display: `$${(product.price.centAmount / 100).toFixed(2)}` }
+							: { display: '$—' },
+	}));
 
 export const loader = async () => {
-	const products = (await getProducts()).map(toView);
+	const products = normalizeProducts(await getProducts());
 	return { products };
 };
 
 export const head = () => ({ title: 'Products' });
 
 export const Page = ({ products }) => {
+	const block = createPlpProductsBlock({ title: 'Products', products });
+
 	return (
 		<main>
 			<h1 style={{ marginTop: 0 }}>Products</h1>
-			<ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-				{products.map((p) => (
-					<li key={p.key} style={{ padding: '12px 0', borderBottom: '1px solid #eee' }}>
-						<a href={`/products/${encodeURIComponent(p.key)}`}>{p.name}</a>
-						<div style={{ opacity: 0.7 }}>{p.price}</div>
-					</li>
-				))}
-			</ul>
+			<PlpProductsBlock block={block} />
 		</main>
 	);
 };

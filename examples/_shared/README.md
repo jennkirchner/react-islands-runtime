@@ -13,7 +13,7 @@ This folder contains shared code for the demo applications under `examples/`.
 
 The key idea is that `react-islands-runtime` expects the app to provide its own design system features.
 
-- Imports from `react-islands-runtime/ssr` come from the package export surface
+- Imports from `react-islands-runtime/ssr` come from the runtime package export surface
 - Each demo defines its own design system in its local `server/designSystem.js`
 - Those files show how a library consumer can define themes with `defineTheme(...)`
 - `examples/_shared/design-system/base.js` shows the small shared wiring helpers around `createDomainThemeFeature(...)` and `createThemeModeFeature(...)`

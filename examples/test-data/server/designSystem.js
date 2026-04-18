@@ -1,10 +1,6 @@
-import { defineTheme } from 'react-islands-runtime/ssr';
+import { createDesignSystem, defineTheme } from 'react-islands-runtime/ssr';
 
-import {
-	createAppThemeFeature,
-	createAppThemeModeFeature,
-	createSharedStyles,
-} from '../../_shared/design-system/base.js';
+import { createSharedStyles } from '../../_shared/design-system/base.js';
 
 const testDataStyles = `
 	[data-demo-theme="test-data"] .demo-shell {
@@ -353,4 +349,10 @@ const theme = defineTheme({
 	},
 });
 
-export const demoFeatures = [createAppThemeFeature(theme), createAppThemeModeFeature(theme, { allowAuto: true })];
+export const { features: demoFeatures } = createDesignSystem(theme, {
+	mode: {
+		allowAuto: true,
+		defaultPreference: 'auto',
+		fallbackMode: 'light',
+	},
+});

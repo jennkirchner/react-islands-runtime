@@ -1,5 +1,5 @@
 import React from 'react';
-import { ThemeModeSwitch } from '../../../../_shared/components/ThemeModeSwitch.jsx';
+import { ThemeModeSwitch } from 'react-islands';
 
 export const loader = async () => ({ siteName: 'contentstack+commercetools' });
 

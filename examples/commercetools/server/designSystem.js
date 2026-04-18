@@ -1,6 +1,6 @@
-import { defineTheme } from 'react-islands-runtime/ssr';
+import { createDesignSystem, defineTheme } from 'react-islands-runtime/ssr';
 
-import { createAppThemeFeature, createAppThemeModeFeature, createSharedStyles } from '../../_shared/design-system/base.js';
+import { createSharedStyles } from '../../_shared/design-system/base.js';
 
 const theme = defineTheme({
 	name: 'commercetools',
@@ -58,4 +58,4 @@ const theme = defineTheme({
 	},
 });
 
-export const demoFeatures = [createAppThemeFeature(theme), createAppThemeModeFeature(theme)];
+export const { features: demoFeatures } = createDesignSystem(theme);

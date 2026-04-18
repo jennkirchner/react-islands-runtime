@@ -3,8 +3,7 @@ import { Island, resolveIslandModule } from 'react-islands-runtime/ssr';
 
 import CartSSR from '../../../../_shared/runtime/src/islands/Cart.ssr.jsx';
 import ProductSearchSSR from '../../../../_shared/runtime/src/islands/ProductSearch.ssr.jsx';
-import { CarouselBlock } from '../../../../_shared/components/CarouselBlock.jsx';
-import { FeatureSplitBlock } from '../../../../_shared/components/FeatureSplitBlock.jsx';
+import { CarouselBlock, FeatureSplitBlock } from 'react-islands';
 import { listSurfProducts } from '../../../../_shared/demo-data/surf-shop.js';
 import { normalizeHomepageBlocks } from '../../../../_shared/homepageBlocks.js';
 import { getLandingPage } from '../../../models/content.model.js';

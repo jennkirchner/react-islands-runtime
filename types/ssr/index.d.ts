@@ -137,6 +137,19 @@ export interface ThemeModeFeatureOptions {
 	themeColors?: Record<string, string>;
 }
 
+export interface DesignSystemDefinition {
+	theme?: ThemeDefinition;
+	resolveTheme?: DomainThemeFeatureOptions['resolveTheme'];
+	selector?: string;
+	variablePrefix?: string;
+	cssServiceFactory?: () => CssService;
+	mode?: false | ThemeModeFeatureOptions;
+}
+
+export interface CreatedDesignSystem extends DesignSystemDefinition {
+	features: RenderFeature[];
+}
+
 export type RouteLoaderResult<TProps extends Record<string, unknown>> = TProps | void | Promise<TProps | void>;
 
 export type RouteLoader<
@@ -250,6 +263,15 @@ export function createDomainThemeFeature(options: DomainThemeFeatureOptions): Re
 export function defineTheme<T extends ThemeDefinition>(theme: T): T;
 export function defineThemes<T extends Record<string, ThemeDefinition>>(themes: T): T;
 export function createThemeModeFeature(options?: ThemeModeFeatureOptions): RenderFeature;
+export function defineDesignSystem<T extends DesignSystemDefinition>(designSystem: T): T;
+export function createDesignSystemFeatures(
+	input: ThemeDefinition | DesignSystemDefinition,
+	overrides?: Partial<DesignSystemDefinition>,
+): RenderFeature[];
+export function createDesignSystem(
+	input: ThemeDefinition | DesignSystemDefinition,
+	overrides?: Partial<DesignSystemDefinition>,
+): CreatedDesignSystem;
 
 export function createManifestProvider(options: {
 	mode: 'dev' | 'prod';
