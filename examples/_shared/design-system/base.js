@@ -438,8 +438,8 @@ export const sharedShellStyles = `
 	}
 
 	.plp-products__media {
-		flex: 0 0 68px;
-		inline-size: 68px;
+		flex: 0 0 123px;
+		inline-size: 123px;
 		block-size: 156px;
 		overflow: clip;
 		border-radius: 14px;
@@ -451,6 +451,8 @@ export const sharedShellStyles = `
 		height: 100%;
 		display: block;
 		object-fit: cover;
+		backface-visibility: hidden;
+		transform: translateZ(0);
 	}
 
 	.plp-products__content {
@@ -461,12 +463,20 @@ export const sharedShellStyles = `
 		align-content: center;
 	}
 
+	.plp-products__content--compact {
+		gap: 4px;
+	}
+
 	.plp-products__eyebrow {
-		font-size: 0.66rem;
+		font-size: 0.62rem;
 		font-weight: 700;
 		letter-spacing: 0.12em;
+		line-height: 1.18;
 		text-transform: uppercase;
 		color: var(--text-muted);
+		overflow-wrap: anywhere;
+		word-break: break-word;
+		hyphens: auto;
 	}
 
 	.plp-products__price {
@@ -483,9 +493,23 @@ export const sharedShellStyles = `
 	.plp-products__item-title {
 		margin: 0;
 		font-size: 0.95rem;
-		line-height: 1.08;
+		line-height: 1.06;
 		letter-spacing: -0.02em;
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+	}
+
+	.plp-products__title-link {
+		color: inherit;
+		text-decoration: none;
+		overflow-wrap: anywhere;
 		word-break: break-word;
+	}
+
+	.plp-products__title-link:hover {
+		text-decoration: underline;
 	}
 
 	.plp-products__description {
@@ -496,6 +520,34 @@ export const sharedShellStyles = `
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
+		overflow-wrap: anywhere;
+		word-break: break-word;
+	}
+
+	.plp-products__actions {
+		display: flex;
+		align-items: center;
+		margin-top: 2px;
+	}
+
+	.plp-products__more {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.34rem 0.62rem;
+		border-radius: 999px;
+		border: 1px solid color-mix(in srgb, var(--border-subtle) 84%, white);
+		background: color-mix(in srgb, var(--surface-panel) 88%, white);
+		color: inherit;
+		font-size: 0.72rem;
+		font-weight: 700;
+		line-height: 1;
+		text-decoration: none;
+		box-shadow: inset 0 1px 0 color-mix(in srgb, white 54%, transparent);
+	}
+
+	.plp-products__more:hover {
+		background: color-mix(in srgb, var(--surface-accent) 12%, var(--surface-panel));
 	}
 
 	.product-detail {
