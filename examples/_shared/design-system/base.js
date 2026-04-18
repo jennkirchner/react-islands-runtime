@@ -945,10 +945,6 @@ export const sharedShellStyles = `
 		align-items: stretch;
 	}
 
-	.demo-carousel--floating-cards .demo-carousel__slide:nth-child(2n) {
-		transform: translateY(6px);
-	}
-
 	.demo-carousel--spotlight-dots .demo-carousel__slide {
 		grid-template-columns: minmax(220px, 0.9fr) minmax(0, 1.1fr);
 		align-items: center;
