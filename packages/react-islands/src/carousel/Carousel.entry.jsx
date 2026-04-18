@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { resolveComponentDesignSystem } from '../designSystem/resolveComponentDesignSystem.js';
 
 const cx = (...values) => values.filter(Boolean).join(' ');
 
@@ -197,7 +198,7 @@ const SlideCard = ({ slide, index, cardClassName }) => (
 	</article>
 );
 
-const Carousel = ({ title, slides = [], variant = 'peek-strip', options = {}, accentIconSrc }) => {
+const Carousel = ({ title, slides = [], variant = 'peek-strip', options = {}, accentIconSrc, designSystem }) => {
 	const {
 		autoPlayMs = 3200,
 		showDots = false,
@@ -244,9 +245,19 @@ const Carousel = ({ title, slides = [], variant = 'peek-strip', options = {}, ac
 		scrollToSlide(scroller, nextIndex);
 	};
 
+	const rootDesign = resolveComponentDesignSystem({
+		componentName: 'carousel',
+		designSystem,
+		className: cx(`demo-carousel--${variant}`, paused && 'is-paused'),
+		defaultClassName: 'demo-carousel',
+		defaultAttrs: { 'data-carousel-variant': variant },
+	});
+
 	return (
 		<div
-			className={cx('demo-carousel', `demo-carousel--${variant}`, paused && 'is-paused')}
+			className={rootDesign.className}
+			style={rootDesign.style}
+			{...rootDesign.attrs}
 			onMouseEnter={pauseOnHover ? () => setPaused(true) : undefined}
 			onMouseLeave={pauseOnHover ? () => setPaused(false) : undefined}
 		>

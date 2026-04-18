@@ -1,4 +1,5 @@
 import React from 'react';
+import { resolveComponentDesignSystem } from '../designSystem/resolveComponentDesignSystem.js';
 
 const styles = {
 	form: {
@@ -43,6 +44,7 @@ export const ProductSearchShell = ({
 	inputName = 'q',
 	autoFocus = true,
 	rootProps = {},
+	designSystem,
 	onChange,
 	onKeyDown,
 	onFocus,
@@ -53,10 +55,23 @@ export const ProductSearchShell = ({
 	children,
 }) => {
 	const isControlled = typeof onChange === 'function';
+	const rootDesign = resolveComponentDesignSystem({
+		componentName: 'productSearch',
+		designSystem,
+		className: rootProps?.className,
+		style: rootProps?.style,
+		defaultClassName: 'search-island__root',
+	});
+	const mergedRootProps = {
+		...rootProps,
+		...rootDesign.attrs,
+		className: rootDesign.className,
+		style: { ...styles.form, ...(rootDesign.style || {}) },
+	};
 
 	return (
 		<>
-			<div className="search-island__root" style={styles.form} {...rootProps}>
+			<div {...mergedRootProps}>
 				<form action={action} method={method} onSubmit={onSubmit} className="search-island" role="search">
 					<div className="search-island__input-wrapper" style={styles.wrapper}>
 						<input

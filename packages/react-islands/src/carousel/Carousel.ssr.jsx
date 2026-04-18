@@ -1,4 +1,5 @@
 import React from 'react';
+import { resolveComponentDesignSystem } from '../designSystem/resolveComponentDesignSystem.js';
 
 const SlideCard = ({ slide, index, cardClassName }) => (
 	<article
@@ -17,7 +18,7 @@ const SlideCard = ({ slide, index, cardClassName }) => (
 	</article>
 );
 
-const CarouselSSR = ({ title, slides = [], variant = 'peek-strip', accentIconSrc, options = {} }) => {
+const CarouselSSR = ({ title, slides = [], variant = 'peek-strip', accentIconSrc, options = {}, designSystem }) => {
 	const pinnedPane = variant === 'pin-first-marquee' && options.freezeFirstFrame;
 	const pinnedSlide = pinnedPane ? slides[0] : null;
 	const scrollSlides = pinnedPane ? slides.slice(1) : slides;
@@ -27,8 +28,16 @@ const CarouselSSR = ({ title, slides = [], variant = 'peek-strip', accentIconSrc
 	const canGoPrev = loopNavButtons ? scrollSlides.length > 1 : false;
 	const canGoNext = scrollSlides.length > 1;
 
+	const rootDesign = resolveComponentDesignSystem({
+		componentName: 'carousel',
+		designSystem,
+		className: `demo-carousel--${variant}`,
+		defaultClassName: 'demo-carousel',
+		defaultAttrs: { 'data-carousel-variant': variant },
+	});
+
 	return (
-		<div className={`demo-carousel demo-carousel--${variant}`}>
+		<div className={rootDesign.className} style={rootDesign.style} {...rootDesign.attrs}>
 			<div className="demo-carousel__header">
 				<h2 className="demo-carousel__title">{title}</h2>
 				{options.showArrows ? (

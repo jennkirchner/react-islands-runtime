@@ -1,4 +1,5 @@
 import React from 'react';
+import { resolveComponentDesignSystem } from '../designSystem/resolveComponentDesignSystem.js';
 
 const fallbackProducts = [
 	{
@@ -34,15 +35,21 @@ const getGalleryImages = (products = []) => {
 	return images.slice(0, 4);
 };
 
-export const FeatureSplitBlock = ({ block, products = [], layoutIndex = 0, className = '' }) => {
+export const FeatureSplitBlock = ({ block, products = [], layoutIndex = 0, className = '', designSystem }) => {
 	const reverse = layoutIndex % 2 === 1;
 	const selected = getProductSlice(products, layoutIndex * 2);
 	const [leadProduct, supportingProduct, detailProduct] = selected;
 	const galleryImages = getGalleryImages(selected);
-	const classes = ['demo-feature', reverse ? 'demo-feature--reverse' : '', className].filter(Boolean).join(' ');
+	const rootDesign = resolveComponentDesignSystem({
+		componentName: 'featureSplitBlock',
+		designSystem,
+		className: [reverse ? 'demo-feature--reverse' : '', className].filter(Boolean).join(' '),
+		defaultClassName: 'demo-feature',
+		defaultAttrs: { 'data-feature-layout': reverse ? 'reverse' : 'default' },
+	});
 
 	return (
-		<section className={classes}>
+		<section className={rootDesign.className} style={rootDesign.style} {...rootDesign.attrs}>
 			<div className="demo-feature__content">
 				<span className="demo-feature__eyebrow">{block?.eyebrow || leadProduct?.tags?.[0] || 'Featured Layout'}</span>
 				<h2 className="demo-feature__title">{block?.title || 'Featured Products'}</h2>

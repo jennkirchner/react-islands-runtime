@@ -1,11 +1,19 @@
 import React from 'react';
+import { resolveComponentDesignSystem } from '../designSystem/resolveComponentDesignSystem.js';
 
-export const PlpProductsBlock = ({ block, className = '', style }) => {
+export const PlpProductsBlock = ({ block, className = '', style, designSystem }) => {
 	const items = Array.isArray(block?.items) ? block.items.filter(Boolean) : [];
 	if (!items.length) return null;
+	const rootDesign = resolveComponentDesignSystem({
+		componentName: 'plpProductsBlock',
+		designSystem,
+		className,
+		style,
+		defaultClassName: 'plp-products',
+	});
 
 	return (
-		<section className={['plp-products', className].filter(Boolean).join(' ')} style={style}>
+		<section className={rootDesign.className} style={rootDesign.style} {...rootDesign.attrs}>
 			<div className="plp-products__header">
 				<h2 className="plp-products__title">{block?.title || 'Products'}</h2>
 				{block?.href ? (

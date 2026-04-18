@@ -11,6 +11,7 @@ export const ProductSearchSSR = ({
 	minChars = 2,
 	debounceMs = 180,
 	maxSuggestions = 8,
+	designSystem,
 }) => {
 	const enhanceScript = `(() => {
 		if (window.__riProductSearchEnhanced) return;
@@ -139,6 +140,7 @@ export const ProductSearchSSR = ({
 				method="get"
 				inputName={queryName}
 				autoFocus={autoFocus}
+				designSystem={designSystem}
 				ariaExpanded={false}
 				rootProps={{
 					'data-search-enhanced': 'true',

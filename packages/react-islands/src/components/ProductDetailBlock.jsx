@@ -1,12 +1,20 @@
 import React from 'react';
+import { resolveComponentDesignSystem } from '../designSystem/resolveComponentDesignSystem.js';
 
-export const ProductDetailBlock = ({ block, className = '', style }) => {
+export const ProductDetailBlock = ({ block, className = '', style, designSystem }) => {
 	if (!block) return null;
 
 	const hasImage = Boolean(block?.image || block?.fallbackImage);
+	const rootDesign = resolveComponentDesignSystem({
+		componentName: 'productDetailBlock',
+		designSystem,
+		className,
+		style,
+		defaultClassName: 'product-detail',
+	});
 
 	return (
-		<section className={['product-detail', className].filter(Boolean).join(' ')} style={style}>
+		<section className={rootDesign.className} style={rootDesign.style} {...rootDesign.attrs}>
 			<div className="product-detail__layout">
 				<div className="product-detail__media-column">
 					<div className="product-detail__media-frame">

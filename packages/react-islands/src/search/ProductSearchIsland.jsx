@@ -43,6 +43,7 @@ export const ProductSearchIsland = ({
 	showPrices = true,
 	fuzzyMatch = true,
 	autoFocus = true,
+	designSystem,
 }) => {
 	const [query, setQuery] = useState('');
 	const [suggestions, setSuggestions] = useState([]);
@@ -296,6 +297,7 @@ export const ProductSearchIsland = ({
 			placeholder={placeholder}
 			value={query}
 			autoFocus={autoFocus}
+			designSystem={designSystem}
 			onChange={handleInputChange}
 			onKeyDown={handleKeyDown}
 			onFocus={handleFocus}

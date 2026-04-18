@@ -1,15 +1,24 @@
 import React from 'react';
+import { resolveComponentDesignSystem } from '../designSystem/resolveComponentDesignSystem.js';
 
-export const GridItemsBlock = ({ block, className, style }) => {
+export const GridItemsBlock = ({ block, className, style, designSystem }) => {
 	const items = Array.isArray(block?.items) ? block.items.filter(Boolean) : [];
 	if (!items.length) return null;
 	const hasOddLayout = items.length > 1 && items.length % 2 === 1;
+	const rootDesign = resolveComponentDesignSystem({
+		componentName: 'gridItemsBlock',
+		designSystem,
+		className,
+		style,
+		defaultClassName: 'grid-items',
+		defaultAttrs: { 'data-grid-items-layout': hasOddLayout ? 'feature-first' : 'even' },
+	});
 
 	return (
 		<section
-			className={['grid-items', className].filter(Boolean).join(' ')}
-			data-grid-items-layout={hasOddLayout ? 'feature-first' : 'even'}
-			style={style}
+			className={rootDesign.className}
+			style={rootDesign.style}
+			{...rootDesign.attrs}
 		>
 			<div className="grid-items__header">
 				<h2 className="grid-items__title">{block?.title || 'Featured Items'}</h2>
