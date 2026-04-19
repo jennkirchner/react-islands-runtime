@@ -16,9 +16,6 @@
 .vscode/
 *.code-workspace
 /examples/.npm-cache
-<<<<<<< Updated upstream
 /.npm-cache
-=======
 examples/yarn.lock
 yarn.lock
->>>>>>> Stashed changes
