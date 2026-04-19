@@ -1,4 +1,4 @@
-// Demo API routes wiring controllers
+// ExampleAPI routes wiring controllers
 import { Router } from 'express';
 import { status } from '../controllers/api.controller.js';
 import { getCart, addItem } from '../controllers/cart.controller.js';

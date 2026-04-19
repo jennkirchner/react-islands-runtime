@@ -19,7 +19,7 @@ let cmsUnavailable = false;
 const warnMissingConfig = () => {
 	if (didWarnMissingConfig) return;
 	didWarnMissingConfig = true;
-	console.warn('[contentstack-commercetools-demo] Missing CONTENTSTACK_* env; using built-in demo content.');
+	console.warn('[contentstack-commercetools] Missing CONTENTSTACK_* env; using built-in examplecontent.');
 };
 
 const warnCmsError = (error) => {
@@ -28,14 +28,12 @@ const warnCmsError = (error) => {
 
 	if (error?.error_code === 109 || error?.status === 412) {
 		cmsUnavailable = true;
-		console.warn(
-			'[contentstack-commercetools-demo] Contentstack stack cannot be found. Check CONTENTSTACK_API_KEY.',
-		);
+		console.warn('[contentstack-commercetools] Contentstack stack cannot be found. Check CONTENTSTACK_API_KEY.');
 		return;
 	}
 
 	console.warn(
-		'[contentstack-commercetools-demo] Falling back to built-in demo content after CMS error:',
+		'[contentstack-commercetools] Falling back to built-in examplecontent after CMS error:',
 		error?.message || error,
 	);
 };
@@ -55,17 +53,21 @@ const PRODUCT_IMAGES_FIELD = process.env.CONTENTSTACK_PRODUCT_IMAGES_FIELD || 'i
 const getStack = () => createCmsClient().stack;
 
 const getFallbackPage = (slug = 'home') => ({
+	isFallback: true,
 	title: slug === 'home' ? 'Contentstack + Commercetools' : 'Page',
 	blocks: [
 		{
 			type: 'hero',
-			title: 'Weekly Deals',
-			subtitle: 'Running with built-in demo content until Contentstack is configured.',
+			title: 'Mix & Match',
+			subtitle: 'A grocery-style fallback homepage powered by the shared component design system.',
+			image: '/app-images/fruit-basket.png',
+			ctaLabel: 'Shop now',
+			href: '/products',
 		},
 		{
 			type: 'promo',
-			title: 'Featured Stories',
-			body: 'Editorial product groupings and promo content rendered from the shared fixture catalog.',
+			title: 'Weekly Savings',
+			body: 'Merchandising blocks and promotional rails rendered through the shared library until Contentstack is configured.',
 		},
 		{
 			type: 'product_search',

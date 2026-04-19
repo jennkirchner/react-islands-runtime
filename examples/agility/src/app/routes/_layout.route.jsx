@@ -2,7 +2,7 @@ import React from 'react';
 import { ThemeModeSwitch } from 'react-islands';
 import { demoComponentDesignSystem } from '../../../server/designSystem.js';
 
-export const loader = async () => ({ siteName: 'commercetools' });
+export const loader = async () => ({ siteName: 'agility' });
 
 export const head = (props) => ({ title: props.siteName });
 
@@ -16,7 +16,7 @@ export const Layout = ({ children, siteName }) => {
 				</div>
 				<nav className="shell__nav">
 					<a href="/">Home</a>
-					<a href="/products">Products</a>
+					<a href="/content">Content</a>
 				</nav>
 				<div className="shell__actions">
 					<ThemeModeSwitch designSystem={demoComponentDesignSystem} />

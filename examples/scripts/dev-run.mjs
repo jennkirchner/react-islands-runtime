@@ -1,18 +1,18 @@
 import { spawn } from 'node:child_process';
 
-const DEMO_TARGET = process.env.DEMO_TARGET || 'contentstack';
+const EXAMPLE_TARGET = process.env.EXAMPLE_TARGET || 'contentstack';
 
 const targets = {
-	contentstack: { port: 3001, serverScript: 'dev:contentstack-demo' },
-	commercetools: { port: 3000, serverScript: 'dev:commercetools-demo' },
-	agility: { port: 3002, serverScript: 'dev:agility-demo' },
-	'test-data': { port: 3004, serverScript: 'dev:test-data-demo' },
-	'contentstack-commercetools': { port: 3003, serverScript: 'dev:contentstack-commercetools-demo' },
+	contentstack: { port: 3001, serverScript: 'dev:contentstack-server' },
+	commercetools: { port: 3000, serverScript: 'dev:commercetools-server' },
+	agility: { port: 3002, serverScript: 'dev:agility-server' },
+	'test-data': { port: 3004, serverScript: 'dev:test-data-server' },
+	'contentstack-commercetools': { port: 3003, serverScript: 'dev:contentstack-commercetools-server' },
 };
 
-const target = targets[DEMO_TARGET];
+const target = targets[EXAMPLE_TARGET];
 if (!target) {
-	console.error(`Unknown DEMO_TARGET: ${DEMO_TARGET}`);
+	console.error(`Unknown EXAMPLE_TARGET: ${EXAMPLE_TARGET}`);
 	process.exit(1);
 }
 

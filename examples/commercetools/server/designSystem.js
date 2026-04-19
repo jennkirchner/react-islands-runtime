@@ -1,6 +1,6 @@
 import { createDesignSystem, defineTheme } from 'react-islands-runtime/ssr';
 
-import { createSharedStyles } from '../../_shared/design-system/base.js';
+import { createSharedStyles } from './baseStyles.js';
 import { createExampleComponentDesignSystem } from '../../_shared/design-system/componentDesignSystem.js';
 
 const theme = defineTheme({
@@ -28,7 +28,7 @@ const theme = defineTheme({
 		},
 	},
 	documentProps: {
-		htmlAttrs: { 'data-demo-theme': 'commercetools' },
+		htmlAttrs: { 'data-theme': 'commercetools' },
 		styles: createSharedStyles(),
 	},
 	modes: {

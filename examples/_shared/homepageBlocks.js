@@ -1,4 +1,14 @@
-import { getDemoCarouselBlock } from './carousels.js';
+const slidesFromProducts = (products = [], limit = 5) =>
+	(Array.isArray(products) ? products : [])
+		.filter(Boolean)
+		.slice(0, limit)
+		.map((p) => ({
+			eyebrow: p?.tags?.[0] || p?.categories?.[0] || 'Product',
+			title: p?.name || 'Untitled',
+			body: p?.description || '',
+			image: p?.imageUrl || p?.images?.[0] || null,
+		}))
+		.filter((s) => s.image);
 
 const ensureBlock = (blocks, type, factory) => {
 	if (!blocks.some((block) => block.type === type)) blocks.push(factory());
@@ -29,7 +39,7 @@ const moveBlockToFront = (blocks, type) => {
 	return next;
 };
 
-export const normalizeHomepageBlocks = (blocks = [], demoName) => {
+export const normalizeHomepageBlocks = (blocks = [], demoName, { products = [] } = {}) => {
 	const next = [...blocks];
 
 	ensureBlock(next, 'product_search', () => ({
@@ -42,7 +52,13 @@ export const normalizeHomepageBlocks = (blocks = [], demoName) => {
 		islandKey: 'cart',
 		hydrate: 'immediate',
 	}));
-	ensureBlock(next, 'carousel', () => getDemoCarouselBlock(demoName));
+	ensureBlock(next, 'carousel', () => ({
+		type: 'carousel',
+		title: 'Featured',
+		variant: 'peek-strip',
+		options: { showDots: false, showArrows: true, autoPlayMs: 0, pauseOnHover: true },
+		slides: slidesFromProducts(products, 5),
+	}));
 
 	if (next.some((block) => block.type === 'hero')) {
 		const searchAfterHero = moveBlockAfter(next, 'product_search', 'hero');

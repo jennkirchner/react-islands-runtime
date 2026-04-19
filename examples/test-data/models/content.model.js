@@ -1,4 +1,4 @@
-import { listSurfProducts } from '../../_shared/demo-data/surf-shop.js';
+import { listSurfProducts } from '../../_shared/data/surf-shop.js';
 
 const heroBanners = [
 	{
@@ -18,7 +18,7 @@ export const getLandingPage = async (slug = 'home') => {
 
 	return {
 		slug,
-		title: 'Test Data Demo',
+		title: 'Test Data ',
 		blocks: [
 			{
 				type: 'hero',
@@ -26,7 +26,7 @@ export const getLandingPage = async (slug = 'home') => {
 				subtitle:
 					'Sun-washed boards, easy local search, and playful surf-shop data all running from checked-in fixtures.',
 				eyebrow: 'Liquid Glass Surf Data',
-				image: '/demo-images/liquid-glass-board.jpg',
+				image: '/images/liquid-glass-board.jpg',
 			},
 			{
 				type: 'promo',
@@ -35,7 +35,7 @@ export const getLandingPage = async (slug = 'home') => {
 			},
 			{
 				type: 'promo',
-				title: 'Why This Demo Exists',
+				title: 'Why This ExampleExists',
 				body: 'Use it to verify islands, search, routing, and product rendering without external services.',
 			},
 			{ type: 'product_search', islandKey: 'product_search', hydrate: 'immediate' },

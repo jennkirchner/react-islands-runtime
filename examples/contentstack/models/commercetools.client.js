@@ -1,5 +1,5 @@
-// Demo product data (surf shop)
-import { listSurfProducts, getSurfProductBySku } from '../../_shared/demo-data/surf-shop.js';
+// Exampleproduct data (surf shop)
+import { listSurfProducts, getSurfProductBySku } from '../../_shared/data/surf-shop.js';
 
 export const getProducts = async () => listSurfProducts().products;
 

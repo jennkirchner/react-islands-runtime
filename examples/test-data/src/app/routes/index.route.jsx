@@ -3,7 +3,7 @@ import { Island, resolveIslandModule } from 'react-islands-runtime/ssr';
 
 import CartSSR from '../../../../_shared/runtime/src/islands/Cart.ssr.jsx';
 import { CarouselBlock, FeatureSplitBlock, ProductSearchSSR } from 'react-islands';
-import { listSurfProducts } from '../../../../_shared/demo-data/surf-shop.js';
+import { listSurfProducts } from '../../../../_shared/data/surf-shop.js';
 import { normalizeHomepageBlocks } from '../../../../_shared/homepageBlocks.js';
 import { demoComponentDesignSystem } from '../../../server/designSystem.js';
 import { getLandingPage, getHeroBanners } from '../../../models/content.model.js';
@@ -22,19 +22,19 @@ export const loader = async () => {
 		}));
 	}
 
-	const blocks = normalizeHomepageBlocks([...rawBlocks, ...heroBlocks], 'test-data-demo');
 	const featuredProducts = listSurfProducts({ limit: 6 }).products;
+	const blocks = normalizeHomepageBlocks([...rawBlocks, ...heroBlocks], 'test-data', { products: featuredProducts });
 
 	return {
 		page: {
-			title: page?.title || 'Test Data Demo',
+			title: page?.title || 'Test Data ',
 			blocks,
 			featuredProducts,
 		},
 	};
 };
 
-export const head = (props) => ({ title: props.page?.title || 'Test Data Demo' });
+export const head = (props) => ({ title: props.page?.title || 'Test Data ' });
 
 export const Page = ({ page }) => {
 	let featureIndex = 0;
@@ -45,7 +45,7 @@ export const Page = ({ page }) => {
 					return (
 						<section key={i} className="test-data-hero">
 							<div className="test-data-hero__content">
-								<span className="test-data-hero__eyebrow">{b.eyebrow || 'Test Data Demo'}</span>
+								<span className="test-data-hero__eyebrow">{b.eyebrow || 'Test Data '}</span>
 								<h1 className="test-data-hero__title">{b.title}</h1>
 								<p className="test-data-hero__subtitle">{b.subtitle}</p>
 								<ul className="test-data-hero__meta">
@@ -55,7 +55,7 @@ export const Page = ({ page }) => {
 								</ul>
 							</div>
 							<div className="test-data-hero__visual">
-								<img src={b.image || '/demo-images/liquid-glass-board.jpg'} alt={b.title} />
+								<img src={b.image || '/images/liquid-glass-board.jpg'} alt={b.title} />
 								<div className="test-data-hero__swash">liquid glass line</div>
 							</div>
 						</section>
@@ -77,7 +77,14 @@ export const Page = ({ page }) => {
 				}
 
 				if (b.type === 'carousel') {
-					return <CarouselBlock key={i} block={b} className="test-data-carousel-card" designSystem={demoComponentDesignSystem} />;
+					return (
+						<CarouselBlock
+							key={i}
+							block={b}
+							className="test-data-carousel-card"
+							designSystem={demoComponentDesignSystem}
+						/>
+					);
 				}
 
 				if (b.type === 'product_search') {
@@ -88,7 +95,11 @@ export const Page = ({ page }) => {
 								Type anything from “glass” to “fins” for live suggestions, then submit into the
 								server-rendered PLP.
 							</p>
-							<ProductSearchSSR placeholder="Search local test products..." searchPageUrl="/products" designSystem={demoComponentDesignSystem} />
+							<ProductSearchSSR
+								placeholder="Search local test products..."
+								searchPageUrl="/products"
+								designSystem={demoComponentDesignSystem}
+							/>
 						</section>
 					);
 				}

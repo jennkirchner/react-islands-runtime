@@ -1,4 +1,4 @@
-import { listSurfProducts, listSurfSuggestions } from '../../_shared/demo-data/surf-shop.js';
+import { listSurfProducts, listSurfSuggestions } from '../../_shared/data/surf-shop.js';
 
 export const searchProducts = async ({ query = '', limit = 10, offset = 0 } = {}) => {
 	const data = listSurfProducts({ query, limit, offset });

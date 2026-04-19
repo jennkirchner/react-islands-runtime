@@ -1,4 +1,4 @@
-# Contentstack + Commercetools Demo
+# Contentstack + Commercetools
 
 This is the most production-like example in the repo.
 
@@ -60,7 +60,7 @@ CT_API_URL=https://api.europe-west1.gcp.commercetools.com
 
 ## Env Loading
 
-This demo loads:
+This exampleloads:
 
 1. `examples/.env`
 2. `examples/.env.contentstack-commercetools` if present
@@ -71,7 +71,7 @@ The content layer is tolerant of bad or missing Contentstack config.
 
 If Contentstack returns the known stack-not-found error, the server logs:
 
-`[contentstack-commercetools-demo] Contentstack stack cannot be found. Check CONTENTSTACK_API_KEY.`
+`[contentstack-commercetools] Contentstack stack cannot be found. Check CONTENTSTACK_API_KEY.`
 
 and uses built-in fallback content instead of crashing the request.
 

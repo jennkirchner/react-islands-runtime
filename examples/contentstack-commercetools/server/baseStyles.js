@@ -142,15 +142,15 @@ export const sharedShellStyles = `
 		--feature-visual-padding: 4px;
 		--feature-card-gap: 14px;
 		--feature-card-padding: 14px;
-		display: grid;
-		grid-template-columns: minmax(0, 0.92fr) minmax(18rem, 1.08fr);
+		display: flex;
+		flex-wrap: wrap;
 		gap: var(--feature-gap);
 		align-items: center;
 		overflow: clip;
 	}
 
 	.feature--reverse {
-		grid-template-columns: minmax(18rem, 1.08fr) minmax(0, 0.92fr);
+		flex-direction: row-reverse;
 	}
 
 	.feature--reverse .feature__content {
@@ -159,6 +159,14 @@ export const sharedShellStyles = `
 
 	.feature--reverse .feature__visual {
 		order: 1;
+	}
+
+	.feature__content {
+		flex: 1 1 18rem;
+	}
+
+	.feature__visual {
+		flex: 1.08 1 18rem;
 	}
 
 	.feature__content,
@@ -975,8 +983,6 @@ export const sharedShellStyles = `
 		overflow-x: auto;
 		overflow-y: hidden;
 		overscroll-behavior-inline: contain;
-		scroll-snap-type: inline mandatory;
-		scroll-padding-inline: 0;
 		scroll-behavior: smooth;
 		scrollbar-width: thin;
 		scrollbar-color: color-mix(in oklab, var(--surface-accent) 74%, white) color-mix(
@@ -1061,8 +1067,6 @@ export const sharedShellStyles = `
 		box-shadow: var(--carousel-slide-shadow);
 		min-height: 0;
 		align-self: start;
-		scroll-snap-align: start;
-		scroll-snap-stop: always;
 	}
 
 	.carousel__slide--pinned {
@@ -1194,48 +1198,8 @@ export const sharedShellStyles = `
 		display: block;
 	}
 
-	@media (min-width: 960px) {
-		.carousel--peek-strip .carousel__scroller {
-			grid-auto-columns: var(--carousel-peek-desktop-columns, calc((100% - 36px) / 3));
-		}
-
-		.carousel--floating-cards .carousel__scroller {
-			grid-auto-columns: var(--carousel-floating-desktop-columns, calc((100% - 36px) / 3));
-		}
-
-		.carousel--editorial-stack .carousel__scroller {
-			grid-auto-columns: 100%;
-		}
-	}
-
-	@media (max-width: 720px) {
-		.feature,
-		.feature--reverse,
-		.feature__visual {
-			grid-template-columns: 1fr;
-		}
-
-		.feature__thumbs {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-
-		.feature--reverse .feature__content,
-		.feature--reverse .feature__visual {
-			order: initial;
-		}
-
-		.carousel__layout--pinned,
-		.carousel--editorial-stack .carousel__slide,
-		.carousel--spotlight-dots .carousel__slide {
-			grid-template-columns: 1fr;
-		}
-
-		.carousel__scroller,
-		.carousel__scroller--rail,
-		.carousel--peek-strip .carousel__scroller,
-		.carousel--floating-cards .carousel__scroller {
-			grid-auto-columns: minmax(84cqi, 1fr);
-		}
+	.carousel--editorial-stack .carousel__scroller {
+		grid-auto-columns: 100%;
 	}
 `;
 

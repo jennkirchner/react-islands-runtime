@@ -15,7 +15,7 @@ const sharedPublicRoot = path.join(__dirname, 'public');
 
 const envPathFromRoot = path.join(examplesRoot, '.env');
 const envPathFromCwd = path.join(process.cwd(), '.env');
-const demoTarget = process.env.DEMO_TARGET || null;
+const demoTarget = process.env.EXAMPLE_TARGET || null;
 const demoEnvPath = demoTarget ? path.join(examplesRoot, `.env.${demoTarget}`) : null;
 
 const loadEnv = (envPath) => {
@@ -26,14 +26,14 @@ const loadEnv = (envPath) => {
 
 const loadedFromRoot = loadEnv(envPathFromRoot);
 const loadedFromCwd = loadEnv(envPathFromCwd);
-const loadedFromDemo = demoEnvPath ? loadEnv(demoEnvPath) : false;
+const loadedFromExample = demoEnvPath ? loadEnv(demoEnvPath) : false;
 
 if (process.env.NODE_ENV !== 'production') {
-	console.log('[demo] env files:', {
+	console.log('[example] env files:', {
 		projectRoot: envPathFromRoot,
 		loadedFromRoot,
 		demoEnvPath,
-		loadedFromDemo,
+		loadedFromExample,
 		cwd: envPathFromCwd,
 		loadedFromCwd,
 		examplesRoot,
@@ -43,7 +43,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const hasContentstackEnv = Boolean(process.env.CONTENTSTACK_API_KEY && process.env.CONTENTSTACK_DELIVERY_TOKEN);
 
-export const startDemoServer = async ({ routesDir, apiRouter, features = [], port = 3000, name = 'demo' }) => {
+export const startServer = async ({ routesDir, apiRouter, features = [], port = 3000, name = 'example' }) => {
 	const app = express();
 
 	app.use(express.json());
@@ -116,8 +116,8 @@ export const startDemoServer = async ({ routesDir, apiRouter, features = [], por
 
 	app.listen(port, () => {
 		console.log(`react-islands ${name} listening on http://localhost:${port}`);
-		if (!hasContentstackEnv && name === 'contentstack-demo') {
-			console.warn('[contentstack-demo] Missing CONTENTSTACK_API_KEY or CONTENTSTACK_DELIVERY_TOKEN in env.');
+		if (!hasContentstackEnv && name === 'contentstack') {
+			console.warn('[contentstack] Missing CONTENTSTACK_API_KEY or CONTENTSTACK_DELIVERY_TOKEN in env.');
 		}
 	});
 

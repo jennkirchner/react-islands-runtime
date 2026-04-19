@@ -1,4 +1,4 @@
-// Demo Contentstack model (SDK-backed, matches main app auth behavior)
+// ExampleContentstack model (SDK-backed, matches main app auth behavior)
 import { createCmsClient } from '../../_shared/runtime/src/server/sdk/contentstack.js';
 
 const isConfiguredValue = (value) => {
@@ -20,7 +20,7 @@ let cmsUnavailable = false;
 const warnMissingConfig = () => {
 	if (didWarnMissingConfig) return;
 	didWarnMissingConfig = true;
-	console.warn('[contentstack-demo] Missing CONTENTSTACK_* env; using built-in demo content.');
+	console.warn('[contentstack] Missing CONTENTSTACK_* env; using built-in examplecontent.');
 };
 
 const warnCmsError = (error) => {
@@ -29,11 +29,11 @@ const warnCmsError = (error) => {
 
 	if (error?.error_code === 109 || error?.status === 412) {
 		cmsUnavailable = true;
-		console.warn('[contentstack-demo] Contentstack stack cannot be found. Check CONTENTSTACK_API_KEY.');
+		console.warn('[contentstack] Contentstack stack cannot be found. Check CONTENTSTACK_API_KEY.');
 		return;
 	}
 
-	console.warn('[contentstack-demo] Falling back to built-in demo content after CMS error:', error?.message || error);
+	console.warn('[contentstack] Falling back to built-in examplecontent after CMS error:', error?.message || error);
 };
 
 const getStack = () => createCmsClient().stack;
@@ -53,12 +53,12 @@ const getContentTypeUid = (name, fallback) => {
 const LANDING_SLUG_FIELD = process.env.CONTENTSTACK_LANDING_SLUG_FIELD || 'slug';
 
 const getFallbackPage = (slug = 'home') => ({
-	title: slug === 'home' ? 'Contentstack Demo' : 'Page',
+	title: slug === 'home' ? 'Contentstack ' : 'Page',
 	blocks: [
 		{
 			type: 'hero',
 			title: 'Weekly Deals',
-			subtitle: 'Running with built-in demo content until Contentstack is configured.',
+			subtitle: 'Running with built-in examplecontent until Contentstack is configured.',
 		},
 		{
 			type: 'promo',

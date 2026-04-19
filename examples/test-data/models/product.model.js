@@ -1,4 +1,4 @@
-import { listSurfProducts, getSurfProductBySku } from '../../_shared/demo-data/surf-shop.js';
+import { listSurfProducts, getSurfProductBySku } from '../../_shared/data/surf-shop.js';
 
 export const listProducts = async (options = {}) => listSurfProducts(options);
 

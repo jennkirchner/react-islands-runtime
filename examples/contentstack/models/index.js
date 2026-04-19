@@ -1,4 +1,4 @@
-// Demo models entry point
+// Examplemodels entry point
 import * as cartModel from './cart.model.js';
 import * as contentstackModel from './contentstack.model.js';
 import * as commercetoolsClient from './commercetools.client.js';

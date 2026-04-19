@@ -226,9 +226,9 @@ export const head: RouteHead<PageProps, AppContext> = (props) => ({
 });
 
 const theme = defineTheme({
-	name: 'demo',
+	name: 'example',
 	documentProps: {
-		htmlAttrs: { 'data-demo-theme': 'demo' },
+		htmlAttrs: { 'data-theme': 'example' },
 	} satisfies DocumentProps,
 });
 
@@ -247,7 +247,7 @@ If you just want to hand the runtime a design system and use it, the higher-leve
 import { createDesignSystem, defineTheme } from 'react-islands-runtime/ssr';
 
 const theme = defineTheme({
-	name: 'demo',
+	name: 'example',
 	themeColor: '#edf7f2',
 	tokens: {
 		surface: { canvas: '#edf7f2' },

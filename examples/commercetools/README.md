@@ -1,4 +1,4 @@
-# Commercetools Demo
+# Commercetools
 
 This example exercises the commerce side of `react-islands-runtime`.
 
@@ -71,4 +71,4 @@ DEFAULT_LOCALE=en-US
 - cart API behavior
 - island hydration against live commerce data
 
-If you want the same storefront shape without third-party credentials, use `test-data-demo` instead.
+If you want the same storefront shape without third-party credentials, use `test-data` instead.

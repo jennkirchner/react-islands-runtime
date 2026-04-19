@@ -1,5 +1,5 @@
-// Demo content model (non-vendor) using local surf shop data
-import { listSurfProducts } from '../../_shared/demo-data/surf-shop.js';
+// Examplecontent model (non-vendor) using local surf shop data
+import { listSurfProducts } from '../../_shared/data/surf-shop.js';
 
 export const getLandingPage = async () => {
 	const products = listSurfProducts({ limit: 3 }).products;

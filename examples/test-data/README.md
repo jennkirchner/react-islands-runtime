@@ -1,6 +1,6 @@
-# Test Data Demo
+# Test Data
 
-This is the fully local demo.
+This is the fully local example.
 
 It uses:
 
@@ -21,7 +21,7 @@ npm run dev:test-data
 
 Open `http://localhost:3004`.
 
-## Why This Demo Exists
+## Why This ExampleExists
 
 Use this example when you want a dependable smoke test for:
 
@@ -67,23 +67,23 @@ without involving Contentstack, commercetools, or Agility.
 
 ## Current UX Shape
 
-The homepage is the beach/surf-themed fixture demo and includes:
+The homepage is the beach/surf-themed fixture exampleand includes:
 
 - a liquid-glass themed hero
 - local surf products
 - search island
 - mini-cart island
 
-Static images for this demo are served from:
+Static images for this exampleare served from:
 
-`examples/_shared/public/demo-images`
+`examples/_shared/public/images`
 
 ## Recommended Use
 
-Start with this demo if:
+Start with this exampleif:
 
 - you are changing the runtime package itself
 - you want to verify the local tarball in `examples/package.json`
 - you need a stable repro for SSR or styling issues
 
-If this demo breaks, the problem is usually in the runtime or shared example plumbing rather than an external vendor integration.
+If this examplebreaks, the problem is usually in the runtime or shared example plumbing rather than an external vendor integration.

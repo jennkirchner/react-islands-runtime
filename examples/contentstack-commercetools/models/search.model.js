@@ -1,5 +1,5 @@
 import { listProducts } from './product.model.js';
-import { listSurfSuggestions } from '../../_shared/demo-data/surf-shop.js';
+import { listSurfSuggestions } from '../../_shared/data/surf-shop.js';
 
 const matchesQuery = (product, query) => {
 	if (!query) return true;

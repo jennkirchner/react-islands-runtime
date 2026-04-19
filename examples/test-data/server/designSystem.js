@@ -1,14 +1,14 @@
 import { createDesignSystem, defineTheme } from 'react-islands-runtime/ssr';
 
-import { createSharedStyles } from '../../_shared/design-system/base.js';
+import { createSharedStyles } from './baseStyles.js';
 import { createExampleComponentDesignSystem } from '../../_shared/design-system/componentDesignSystem.js';
 
 const testDataStyles = `
-	[data-demo-theme="test-data"] .demo-shell {
+	[data-theme="test-data"] .shell {
 		max-width: 1120px;
 	}
 
-	[data-demo-theme="test-data"] .demo-shell__header {
+	[data-theme="test-data"] .shell__header {
 		background:
 			linear-gradient(135deg, oklab(0.9 -0.035 -0.035 / 0.78), oklab(0.97 0.005 0.06 / 0.82)),
 			color-mix(in oklab, var(--surface-panel) 78%, white);
@@ -20,13 +20,13 @@ const testDataStyles = `
 		backdrop-filter: blur(18px) saturate(1.18);
 	}
 
-	[data-demo-theme="test-data"] .demo-shell__nav a {
+	[data-theme="test-data"] .shell__nav a {
 		background: color-mix(in oklab, var(--surface-panel) 72%, white);
 		border-color: color-mix(in oklab, var(--border-subtle) 82%, white);
 		box-shadow: inset 0 1px 0 color-mix(in oklab, white 50%, transparent);
 	}
 
-	[data-demo-theme="test-data"] .demo-theme-switch {
+	[data-theme="test-data"] .theme-switch {
 		background:
 			linear-gradient(180deg, color-mix(in oklab, white 24%, transparent), transparent 88%),
 			color-mix(in oklab, var(--surface-panel) 74%, white);
@@ -36,7 +36,7 @@ const testDataStyles = `
 			inset 0 1px 0 color-mix(in oklab, white 54%, transparent);
 	}
 
-	html[data-demo-theme="test-data"][data-theme-mode="dark"] .demo-shell__header {
+	html[data-theme="test-data"][data-theme-mode="dark"] .shell__header {
 		background:
 			linear-gradient(145deg, color-mix(in oklab, var(--surface-panel) 92%, black), color-mix(in oklab, var(--surface-accent) 14%, var(--surface-panel))),
 			color-mix(in oklab, var(--surface-panel) 92%, black);
@@ -46,11 +46,11 @@ const testDataStyles = `
 			inset 0 1px 0 color-mix(in oklab, white 12%, transparent);
 	}
 
-	[data-demo-theme="test-data"] .demo-shell__main {
+	[data-theme="test-data"] .shell__main {
 		gap: 24px;
 	}
 
-	[data-demo-theme="test-data"] .demo-feature {
+	[data-theme="test-data"] .feature {
 		background:
 			radial-gradient(circle at 14% 18%, oklab(0.99 -0.008 -0.012 / 0.56), transparent 30%),
 			linear-gradient(145deg, color-mix(in oklab, var(--surface-accent) 20%, white), transparent 52%),
@@ -62,7 +62,7 @@ const testDataStyles = `
 			inset 0 -24px 44px color-mix(in oklab, var(--surface-accent) 10%, transparent);
 	}
 
-	[data-demo-theme="test-data"] .demo-feature__eyebrow {
+	[data-theme="test-data"] .feature__eyebrow {
 		display: inline-flex;
 		width: fit-content;
 		padding: 8px 12px;
@@ -72,13 +72,13 @@ const testDataStyles = `
 		box-shadow: inset 0 1px 0 color-mix(in oklab, white 58%, transparent);
 	}
 
-	[data-demo-theme="test-data"] .demo-feature__chip {
+	[data-theme="test-data"] .feature__chip {
 		background: color-mix(in oklab, var(--surface-panel) 68%, white);
 		border-color: color-mix(in oklab, var(--border-subtle) 74%, white);
 		box-shadow: inset 0 1px 0 color-mix(in oklab, white 56%, transparent);
 	}
 
-	[data-demo-theme="test-data"] .demo-feature__lead-card {
+	[data-theme="test-data"] .feature__lead-card {
 		background:
 			linear-gradient(155deg, color-mix(in oklab, var(--surface-accent) 20%, white), transparent 58%),
 			color-mix(in oklab, var(--surface-panel) 84%, white);
@@ -87,15 +87,15 @@ const testDataStyles = `
 			inset 0 1px 0 color-mix(in oklab, white 58%, transparent);
 	}
 
-	[data-demo-theme="test-data"] .demo-feature__support-card {
+	[data-theme="test-data"] .feature__support-card {
 		background:
 			linear-gradient(180deg, color-mix(in oklab, white 26%, transparent), transparent 44%),
 			color-mix(in oklab, var(--surface-panel) 80%, white);
 	}
 
-	[data-demo-theme="test-data"] .demo-feature__thumb,
-	[data-demo-theme="test-data"] .demo-feature__support-media,
-	[data-demo-theme="test-data"] .demo-feature__lead-media img {
+	[data-theme="test-data"] .feature__thumb,
+	[data-theme="test-data"] .feature__support-media,
+	[data-theme="test-data"] .feature__lead-media img {
 		filter: saturate(1.06) contrast(1.02);
 	}
 
@@ -313,7 +313,7 @@ const theme = defineTheme({
 		},
 	},
 	documentProps: {
-		htmlAttrs: { 'data-demo-theme': 'test-data' },
+		htmlAttrs: { 'data-theme': 'test-data' },
 		styles: createSharedStyles(testDataStyles),
 	},
 	modes: {

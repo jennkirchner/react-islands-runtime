@@ -1,4 +1,4 @@
-// Demo Agility CMS model (self-contained)
+// ExampleAgility CMS model (self-contained)
 const AGILITY_GUID = process.env.AGILITY_GUID;
 const AGILITY_API_KEY = process.env.AGILITY_API_KEY;
 const AGILITY_LOCALE = process.env.AGILITY_LOCALE || 'en-us';
@@ -29,7 +29,7 @@ export const getLandingPage = async (slug) => {
 
 	return {
 		slug,
-		title: 'Agility Demo Landing Page',
+		title: 'Agility ExampleLanding Page',
 		blocks: [
 			{ type: 'hero', title: 'Agility Hero', subtitle: 'Agility mock content' },
 			{ type: 'promo', title: 'Agility Promo', body: 'Promotional module' },

@@ -1,11 +1,11 @@
 import { spawn } from 'node:child_process';
 
 const targets = [
-	{ port: 3000, serverScript: 'dev:commercetools-demo' },
-	{ port: 3001, serverScript: 'dev:contentstack-demo' },
-	{ port: 3002, serverScript: 'dev:agility-demo' },
-	{ port: 3003, serverScript: 'dev:contentstack-commercetools-demo' },
-	{ port: 3004, serverScript: 'dev:test-data-demo' },
+	{ port: 3000, serverScript: 'dev:commercetools-server' },
+	{ port: 3001, serverScript: 'dev:contentstack-server' },
+	{ port: 3002, serverScript: 'dev:agility-server' },
+	{ port: 3003, serverScript: 'dev:contentstack-commercetools-server' },
+	{ port: 3004, serverScript: 'dev:test-data-server' },
 ];
 
 const runShell = (command) =>

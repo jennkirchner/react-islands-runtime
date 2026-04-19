@@ -1,4 +1,4 @@
-# Contentstack Demo
+# Contentstack
 
 This example exercises the content side of `react-islands-runtime`.
 
@@ -48,15 +48,15 @@ CONTENTSTACK_REGION=us
 
 ## Fallback Behavior
 
-This demo does not hard-fail when Contentstack is missing or invalid.
+This exampledoes not hard-fail when Contentstack is missing or invalid.
 
 Current behavior:
 
-- missing credentials: falls back to built-in demo content
+- missing credentials: falls back to built-in examplecontent
 - placeholder credentials like `your-api-key`: treated as not configured
 - invalid stack credentials: logs a direct stack-not-found warning and falls back
 
-That makes this demo useful even before you wire up a real stack.
+That makes this exampleuseful even before you wire up a real stack.
 
 ## Files To Read
 

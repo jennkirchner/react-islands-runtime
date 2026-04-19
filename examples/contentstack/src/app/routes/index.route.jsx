@@ -3,7 +3,7 @@ import { Island, resolveIslandModule } from 'react-islands-runtime/ssr';
 
 import CartSSR from '../../../../_shared/runtime/src/islands/Cart.ssr.jsx';
 import { CarouselBlock, FeatureSplitBlock, ProductSearchSSR } from 'react-islands';
-import { listSurfProducts } from '../../../../_shared/demo-data/surf-shop.js';
+import { listSurfProducts } from '../../../../_shared/data/surf-shop.js';
 import { normalizeHomepageBlocks } from '../../../../_shared/homepageBlocks.js';
 import { demoComponentDesignSystem } from '../../../server/designSystem.js';
 import { getLandingPage, getHeroBanners } from '../../../models/contentstack.model.js';
@@ -22,19 +22,21 @@ export const loader = async () => {
 		}));
 	}
 
-	const blocks = normalizeHomepageBlocks([...rawBlocks, ...heroBlocks], 'contentstack-demo');
 	const featuredProducts = listSurfProducts({ limit: 6 }).products;
+	const blocks = normalizeHomepageBlocks([...rawBlocks, ...heroBlocks], 'contentstack', {
+		products: featuredProducts,
+	});
 
 	return {
 		page: {
-			title: page?.title || 'Contentstack Demo',
+			title: page?.title || 'Contentstack ',
 			blocks,
 			featuredProducts,
 		},
 	};
 };
 
-export const head = (props) => ({ title: props.page?.title || 'Contentstack Demo' });
+export const head = (props) => ({ title: props.page?.title || 'Contentstack ' });
 
 export const Page = ({ page }) => {
 	let featureIndex = 0;
@@ -65,14 +67,25 @@ export const Page = ({ page }) => {
 				}
 
 				if (b.type === 'carousel') {
-					return <CarouselBlock key={i} block={b} style={{ marginBottom: 24 }} designSystem={demoComponentDesignSystem} />;
+					return (
+						<CarouselBlock
+							key={i}
+							block={b}
+							style={{ marginBottom: 24 }}
+							designSystem={demoComponentDesignSystem}
+						/>
+					);
 				}
 
 				if (b.type === 'product_search') {
 					return (
 						<section key={i} style={{ marginBottom: 24 }}>
 							<h2>Search</h2>
-							<ProductSearchSSR placeholder="Search products..." searchPageUrl="/products" designSystem={demoComponentDesignSystem} />
+							<ProductSearchSSR
+								placeholder="Search products..."
+								searchPageUrl="/products"
+								designSystem={demoComponentDesignSystem}
+							/>
 						</section>
 					);
 				}

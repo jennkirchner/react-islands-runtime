@@ -22,6 +22,7 @@ export const Page = ({ products, query }) => {
 		resolveFallbackImage: (product) => getLocalProductFallbackImage(product),
 		resolveImage: (product, fallbackImage) =>
 			getPreferredProductImage({ ...product, localFallbackImage: fallbackImage }),
+		resolveEyebrow: (product) => product?.tags?.[0] || null,
 	});
 
 	return (

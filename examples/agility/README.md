@@ -1,12 +1,12 @@
-# Agility Demo
+# Agility
 
-This example is the Agility-flavored CMS demo for `react-islands-runtime`.
+This example is the Agility-flavored CMS examplefor `react-islands-runtime`.
 
 It uses:
 
 - Agility-style content models from `models/agility.model.js`
 - local surf-shop fixture data for search and cart
-- the shared demo shell and design system from `examples/_shared`
+- the shared exampleshell and design system from `examples/_shared`
 
 ## Run It
 
@@ -18,7 +18,7 @@ npm run dev:agility
 
 Open `http://localhost:3002`.
 
-## What This Demo Covers
+## What This ExampleCovers
 
 - SSR page rendering
 - file-based routes
@@ -50,14 +50,14 @@ Open `http://localhost:3002`.
 
 ## Environment
 
-This demo loads:
+This exampleloads:
 
 1. `examples/.env`
 2. `examples/.env.agility` if present
 
 No vendor credentials are required for the local fixture path.
 
-## When To Use This Demo
+## When To Use This
 
 Use this one when you want to verify:
 

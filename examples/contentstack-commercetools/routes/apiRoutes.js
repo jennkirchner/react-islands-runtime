@@ -1,4 +1,4 @@
-// Demo API routes using main controllers (commercetools)
+// ExampleAPI routes using main controllers (commercetools)
 import { Router } from 'express';
 import { status } from '../controllers/api.controller.js';
 import { getCart, addItem } from '../controllers/cart.controller.js';
